@@ -19,6 +19,7 @@ import re
 import sys
 import threading
 import time
+import uuid
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -86,11 +87,14 @@ class AirQuality:
     def get(self, school):
         with self._lock:
             hit = self._cache.get(school["id"])
-            if hit and time.time() - hit[0] < CACHE_TTL_SECONDS:
-                return hit[1]
-        out = fetch_forecast(school)
-        with self._lock:
-            self._cache[school["id"]] = (time.time(), out)
+        if hit and time.time() - hit[0] < CACHE_TTL_SECONDS:
+            out = hit[1]
+        else:
+            out = fetch_forecast(school)
+            with self._lock:
+                self._cache[school["id"]] = (time.time(), out)
+        out = copy.deepcopy(out)
+        out["metadata"]["request_id"] = str(uuid.uuid4())   # unique per request, even when the data is cached
         return out
 
 

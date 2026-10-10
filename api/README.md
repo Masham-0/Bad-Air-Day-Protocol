@@ -67,7 +67,8 @@ curl -s "$API/schools"
 - **200:** `AirQualityResponse`, per `contracts/air_quality.schema.json` (example: `contracts/examples/sample_readings.json`):
   - `current`: `{aqi, pm25, pm10?, category, source, recorded_at}`
   - `forecast`: 24 × `{hour, aqi, pm25, category}`, starting the hour after `current`
-  - `metadata`: `{request_id, generated_at, cache_ttl_seconds?}`
+  - `metadata`: `{request_id, generated_at, cache_ttl_seconds?}`. `request_id` is **unique per request**, even when
+    the data is cached; `generated_at` is when the data itself was produced
 - **404:** unknown school. **500:** unexpected error.
 - **Produced by:** `data/ingest/airquality.py`, via `fetch_forecast(school)`. The data is the CAMS model via Open-Meteo, a
   forecast and not a sensor. If Open-Meteo fails, it falls back to the sample day (`current.source` starts with `"SAMPLE:"`).
@@ -164,6 +165,7 @@ It prints one PASS or FAIL line per check, with the status code and the time tak
 - an unknown school returns 404 with the error envelope
 - the CORS preflight allows `content-type`
 - any response slower than 29 s is flagged
+- two air-quality calls return different `metadata.request_id` values
 
 ## Open questions
 
@@ -186,3 +188,38 @@ It prints one PASS or FAIL line per check, with the status code and the time tak
 10. **`alternative: null` in the protocol example:** `contracts/examples/sample_protocol.json` has `"alternative": null`,
     but `protocol.schema.json` only allows a string. The TypeScript type (`string | null`) allows null. Either the schema
     should allow `null`, or the example should drop the key (Yash). Until then, the mock server drops it.
+
+## Handler consistency review (block 4)
+
+> ⚠️ **REWRITE NEEDED (owner: Krishna, to fix later).** The only `infra/lambda/handlers.py` and `infra/template.yaml`
+> are the sandbox prototypes on `sandbox-A` (`sandbox/infra/…`, reviewed at commit `f4a467b`). On `dev`, `infra/` has
+> only empty placeholders. Those prototypes implement the **earlier four-route design** (`GET /today`, `POST /protocol`,
+> `POST /alert/test`, `PUT /schools/{id}`), so **none of this README's routes exist there**. Against `dev`'s current data
+> layer they would also crash with a `KeyError` on the first request (items 7–8, checked by running the data layer).
+> Local work isn't blocked: `api/mock_server.py` and `api/tests/smoke_api.py` already follow this README.
+
+Line numbers refer to `sandbox/infra/lambda/handlers.py` at `f4a467b`.
+
+| # | Area | This README | handlers.py / template.yaml today | Owner | Exact change |
+|---|---|---|---|---|---|
+| 1 | Routes ⚠️ | `GET /schools`, `/schools/{id}/air-quality`, `/protocol` (GET), `/notices` | `api_handler` serves `GET /today`, `POST /protocol`, `POST /alert/test`, `PUT /schools/{id}` only (L255–276) | Krishna | **Rewrite** `api_handler` routing for the four GET routes. Drop the old four, or park them until open questions 2–4 are decided |
+| 2 | Template routes ⚠️ | The four GET paths | `HttpApi` events for the old paths (template L171–180). `dev`'s `infra/template.yaml` is empty | Krishna | Write the template on `dev` with one `HttpApi` event per GET path on the API function, and `CorsConfiguration` with `AllowMethods: [GET, OPTIONS]` and `AllowHeaders: [content-type]` |
+| 3 | Error shape | `{"error": {"code", "message"}}` | `{"error": "<text>"}` (L276–283), plus `details` on 400 (L235) | Krishna | Return `{"error": {"code": "not_found" \| "bad_request" \| "internal", "message": "…"}}` from every error path |
+| 4 | 500 message | `message` never exposes internals | Returns `repr(exc)[:300]` to the client (L283) | Krishna | Send `"internal error"` to the client and log `repr(exc)` to CloudWatch only |
+| 5 | Preflight | `OPTIONS` → `204` with no body | `204` with body `{}` (L259). A 204 must not carry a body | Krishna | Return `204` with an empty body, or let the `HttpApi` CORS configuration answer preflight |
+| 6 | CORS methods | `GET, OPTIONS` | `GET,POST,PUT,OPTIONS` (L39–40) | Krishna | Tighten to `GET,OPTIONS` in the rewrite. It works as-is, so this is low priority |
+| 7 | School shape ⚠️ | Contract School `{id, name, latitude, longitude, …}` | Reads `school["school_id"]` (L86, L101, L210) and stores the old School shape via `PUT`. `dev`'s School has no `school_id`, so this throws a `KeyError` | Krishna | Read `school["id"]`, and store and serve the contract School |
+| 8 | Air-quality body ⚠️ | `GET /air-quality` returns `fetch_forecast(school)` unchanged (`AirQualityResponse`) | Wraps the data in the old TodayBundle and reads the top-level `forecast["generated_at"]` (L88, L114). `dev`'s output has `metadata.generated_at`, so this throws a `KeyError` | Krishna | Store the `fetch_forecast` output as-is, check staleness from `metadata.generated_at`, and return it as the body of `GET /air-quality` |
+| 9 | `request_id` | Unique per request | Would serve the stored `metadata` unchanged | Krishna | Set `metadata.request_id = context.aws_request_id` on every response |
+| 10 | `GET /schools` | `SchoolListResponse` | No list route; schools only arrive via `PUT` | Krishna | Scan the schools table (or seed it from `contracts/examples/sample_schools.json`) and return `{"schools": [...]}`. The source is open question 4 |
+| 11 | `GET /protocol` | `ProtocolResponse` (Yash's contract) | No GET. Stores the agent prototype's old plan shape (`decisions`, `windows`, `citations`) | Masham + Krishna | Masham: the agent outputs `ProtocolResponse`. Krishna: GET reads today's plan from the plans table (behaviour before a plan exists is open question 2) |
+| 12 | `GET /notices` | `ParentNoticeResponse` | No producer at all | Masham + Krishna | Build the notices from the agent's parent notice (how English and Hindi are split is open question 6), and serve them from a GET route |
+| 13 | Imports and packaging ⚠️ | n/a | Imports `agent.contracts` and `agent.protocol_agent` (L32–33), which are sandbox prototypes; `agent/` on `dev` is an empty skeleton. The import fails on `dev` | Krishna (+ Masham) | Import Masham's real entry point (`generate_protocol`, per Masham's block 6) or drop it from the API function. Package `data/` next to the handlers |
+| 14 | 29 s limit | Every route under 29 s | `POST /alert/test` can run the agent inline (L271) and pass 29 s | Krishna | Only matters if a test-alert route comes back (open question 3). Keep the agent async if it does |
+
+**Fixed in `api/` during this review:**
+- `api/mock_server.py` repeated the cached `metadata.request_id` on every request. It now generates a new id per request,
+  and the "unique per request" rule is now stated in this README.
+- `api/tests/smoke_api.py` gained a check for that rule. It passes on the fixed server and fails on the previous version.
+- Nothing outside `api/` was modified.
+

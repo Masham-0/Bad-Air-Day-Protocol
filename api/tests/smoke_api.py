@@ -8,6 +8,7 @@ Checks, each printed as PASS or FAIL with the HTTP status and time:
     bodies validate against contracts/*.schema.json
   - an unknown school returns 404 with the error envelope {"error": {"code", "message"}}
   - the CORS preflight the client triggers (it sends Content-Type on GET) is answered
+  - two air-quality calls return different metadata.request_id values
 Exits 1 on any FAIL. Schemas are checked with jsonschema when it's installed, otherwise with a small built-in
 validator that covers every keyword the contracts use ($ref, type, required, enum, items, minimum, maximum).
 """
@@ -150,6 +151,20 @@ def main():
         for resource, schema_file in (("air-quality", "air_quality.schema.json"), ("protocol", "protocol.schema.json"),
                                       ("notices", "parent_notice.schema.json")):
             check_route(rep, base, f"/schools/{sid}/{resource}", schema_file, validate, args.timeout)
+
+    if sid:
+        path = f"/schools/{sid}/air-quality"
+        ids, problems, total_ms, last = [], [], 0.0, None
+        for _ in range(2):
+            status, _, body, ms, err = request(base, path, timeout=args.timeout)
+            total_ms, last = total_ms + ms, status
+            if err or status != 200:
+                problems.append(err or f"expected 200, got {status}")
+                break
+            ids.append(((body or {}).get("metadata") or {}).get("request_id"))
+        if not problems and (None in ids or ids[0] == ids[1]):
+            problems.append(f"metadata.request_id must be unique per request, got {ids}")
+        rep.add(not problems, "air-quality request_id unique per request", last, total_ms, "; ".join(problems))
 
     path = f"/schools/{UNKNOWN_SCHOOL}/air-quality"
     status, hdrs, body, ms, err = request(base, path, timeout=args.timeout)
