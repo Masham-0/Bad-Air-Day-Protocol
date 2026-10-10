@@ -103,14 +103,18 @@ export default function Home() {
           <div className="now">
             <div>
               <div className="big">{air.now.pm25}<span className="unit"> µg/m³</span></div>
-              <div className="muted">PM2.5 now ({istTime(air.now.time)} IST)</div>
+              <div className="muted">PM2.5 this hour ({istTime(air.now.time)} IST)</div>
             </div>
             <div className="now-side">
-              <BandChip band={air.now.band} />
-              <div className="muted small" title={air.now.aqi_basis}>AQI-style {air.now.aqi} (indicative)</div>
-              <div className="muted small">24 h mean {air.now.pm25_24h_mean}</div>
+              <BandChip band={air.now.band} text={`${BAND_LABEL[air.now.band].en} this hour`} />
+              <div className="muted small">24 h average {air.now.pm25_24h_mean} µg/m³</div>
+              <div className="muted small" title={air.now.aqi_basis}>AQI-style {air.now.aqi} (24 h, indicative)</div>
             </div>
           </div>
+          <p className="muted small">
+            The band uses this hour&apos;s PM2.5 (our school rule). The AQI-style number uses the 24-hour average,
+            the way CPCB computes AQI, so the two can point in different directions.
+          </p>
           <HourStrip hours={air.hours} />
           <p className="muted small">
             Source: {air.source === "sample" ? "sample data" : "CAMS model via Open-Meteo (forecast, not a sensor)"}.
