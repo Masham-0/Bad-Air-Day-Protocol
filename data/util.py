@@ -11,6 +11,7 @@ MOCKS = ROOT / "mocks"
 USER_AGENT = "bad-air-day-protocol/0.1 (Environmental Hacks 2026)"
 IST = timezone(timedelta(hours=5, minutes=30))
 MOCK_DAY = date(2026, 10, 12)   # IST school day the synthetic mocks describe
+DEFAULT_SCHOOL_DAY_END = "15:00"  # IST; the School contract has no schedule
 
 
 def load_env(path=ROOT / ".env"):
@@ -71,13 +72,14 @@ def ist_today_at(hhmm, now=None, day=None):
 
 
 def plan_day(now=None, school=None):
-    """The IST school day being planned: today, or tomorrow once today's last slot has ended."""
+    """The IST school day being planned: today, or tomorrow once school is over (last schedule slot,
+    or 15:00 IST when the school has no schedule)."""
     now = now or utcnow()
     today = now.astimezone(IST).date()
-    if school and school.get("schedule"):
-        last_end = max(slot["end"] for slot in school["schedule"])
-        if now >= ist_today_at(last_end, day=today):
-            return today + timedelta(days=1)
+    schedule = (school or {}).get("schedule")
+    last_end = max(slot["end"] for slot in schedule) if schedule else DEFAULT_SCHOOL_DAY_END
+    if now >= ist_today_at(last_end, day=today):
+        return today + timedelta(days=1)
     return today
 
 

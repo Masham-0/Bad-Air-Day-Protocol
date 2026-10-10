@@ -1,19 +1,21 @@
-"""Air at the school: Open-Meteo Air Quality (CAMS model) -> `forecast` contract.
+"""Air at the school: Open-Meteo Air Quality (CAMS model) -> contracts/air_quality.schema.json
+(AirQualityResponse: current reading + 24 hourly forecast points + metadata).
 
-Verified against the live API on 10 Oct 2026: hourly/current `pm2_5` is in ug/m3; times have NO
-trailing Z even with timezone=GMT; `past_days=1` gives the trailing 24 h. Open-Meteo's `us_aqi`
-can exceed 500 (we saw 580), so we don't use it; `aqi` here is the CPCB PM2.5 sub-index of the
-model's trailing 24-h mean, computed from config breakpoints.
+Verified against the live API on 10 Oct 2026: hourly/current `pm2_5` and `pm10` are in ug/m3, and
+times have NO trailing Z even with timezone=GMT. Open-Meteo's own `us_aqi` can exceed 500, so we
+compute the US-EPA AQI ourselves from PM2.5 with the breakpoints in data/config/bands.json. EPA
+defines the AQI on a 24 h average; applying it to each hourly model value makes it indicative.
 
-Optional WAQI nearest station (WAQI_TOKEN): `data.aqi` and `data.iaqi.pm25.v` are US-EPA AQI
-sub-indices, NOT ug/m3; they go in `now.station` and are never shown as a concentration.
+School input is the contract School: {id, name, latitude, longitude, district?, address?}.
+The contract has no "sample" flag, so mock data says SAMPLE in `current.source`.
+Any failure -> mocks/forecast.json, shifted onto the requested day.
 
-Any failure -> mocks/forecast.json (source="sample").
+WAQI (`waqi_url`) is kept for scripts/probe_apis.py only; the contract has no station field.
 """
 import copy
-import os
 import sys
 import urllib.parse
+import uuid
 from datetime import timedelta
 
 from data.util import (IST, MOCKS, http_get_json, iso_z, load_config, load_env, load_json, mock_shift_days,
@@ -21,12 +23,13 @@ from data.util import (IST, MOCKS, http_get_json, iso_z, load_config, load_env, 
 
 OPEN_METEO_AQ = "https://air-quality-api.open-meteo.com/v1/air-quality"
 WAQI_GEO = "https://api.waqi.info/feed/geo:{lat};{lon}/?token={token}"
-AQI_BASIS = "CPCB PM2.5 sub-index of the CAMS model's trailing 24-h mean (indicative, not an official CPCB AQI)"
+LIVE_SOURCE = "CAMS forecast via Open-Meteo (model, not a sensor)"
+CACHE_TTL_SECONDS = 3600  # ingest runs hourly
 
 
 def aq_url(lat, lon):
-    q = {"latitude": f"{lat:.4f}", "longitude": f"{lon:.4f}", "hourly": "pm2_5", "current": "pm2_5",
-         "timezone": "GMT", "past_days": 1, "forecast_days": 2}
+    q = {"latitude": f"{lat:.4f}", "longitude": f"{lon:.4f}", "hourly": "pm2_5,pm10", "current": "pm2_5,pm10",
+         "timezone": "GMT", "forecast_days": 2}
     return OPEN_METEO_AQ + "?" + urllib.parse.urlencode(q, safe=",")
 
 
@@ -34,85 +37,62 @@ def waqi_url(lat, lon, token):
     return WAQI_GEO.format(lat=f"{lat:.4f}", lon=f"{lon:.4f}", token=urllib.parse.quote(token))
 
 
-def band_for(pm25, bands_cfg=None):
-    bands_cfg = bands_cfg or load_config("bands")
-    for b in bands_cfg["bands"]:
-        if b["max"] is None or pm25 <= b["max"]:
-            return b["band"]
-    return bands_cfg["bands"][-1]["band"]
-
-
-def cpcb_pm25_aqi(pm25_24h, bands_cfg=None):
-    bands_cfg = bands_cfg or load_config("bands")
-    bps = bands_cfg["cpcb_pm25_aqi"]["breakpoints"]
-    c = max(0.0, pm25_24h)
+def epa_aqi(pm25, bands_cfg=None):
+    """US-EPA AQI value and category for a PM2.5 concentration (ug/m3)."""
+    bps = (bands_cfg or load_config("bands"))["us_epa_pm25_aqi"]["breakpoints"]
+    c = int(max(0.0, pm25) * 10) / 10.0          # EPA truncates PM2.5 to 0.1
     for bp in bps:
         if c <= bp["c_hi"]:
-            return int(round(bp["i_lo"] + (bp["i_hi"] - bp["i_lo"]) * (c - bp["c_lo"]) / (bp["c_hi"] - bp["c_lo"])))
-    return bps[-1]["i_hi"]
+            c_lo = min(bp["c_lo"], c)
+            aqi = (bp["i_hi"] - bp["i_lo"]) / (bp["c_hi"] - bp["c_lo"]) * (c - c_lo) + bp["i_lo"]
+            return int(round(aqi)), bp["category"]
+    return 500, bps[-1]["category"]
 
 
-def fetch_waqi_station(lat, lon, token):
-    d = http_get_json(waqi_url(lat, lon, token), timeout=10)
-    if d.get("status") != "ok":
-        raise ValueError(f"WAQI status {d.get('status')}: {d.get('data')}")
-    data = d["data"]
-    aqi = data.get("aqi")
-    pm = (data.get("iaqi") or {}).get("pm25", {}).get("v")
-    return {"name": data.get("city", {}).get("name", "unknown"),
-            "aqi_us": int(aqi) if isinstance(aqi, (int, float)) else None,
-            "pm25_subindex_us": pm if isinstance(pm, (int, float)) else None,
-            "time": data.get("time", {}).get("iso", ""), "source": "waqi"}
+def _metadata(now):
+    return {"request_id": str(uuid.uuid4()), "generated_at": iso_z(now), "cache_ttl_seconds": CACHE_TTL_SECONDS}
 
 
 def _from_open_meteo(school, now):
-    d = http_get_json(aq_url(school["lat"], school["lon"]))
+    d = http_get_json(aq_url(school["latitude"], school["longitude"]))
     h = d["hourly"]
-    series = [(parse_utc(t), v) for t, v in zip(h["time"], h["pm2_5"])]
+    series = [(parse_utc(t), pm, p10) for t, pm, p10 in zip(h["time"], h["pm2_5"], h["pm10"])]
     hour0 = now.replace(minute=0, second=0, microsecond=0)
-    past = [v for t, v in series if hour0 - timedelta(hours=24) < t <= hour0 and v is not None]
-    ahead = [(t, v) for t, v in series if t >= hour0 and v is not None][:24]
-    if len(ahead) < 24 or len(past) < 18:
-        raise ValueError(f"short series: {len(ahead)} ahead, {len(past)} past")
+    ahead = [(t, pm) for t, pm, _ in series if t > hour0 and pm is not None][:24]
+    if len(ahead) < 24:
+        raise ValueError(f"short forecast: {len(ahead)} hours ahead")
     cur = d.get("current") or {}
     pm_now = cur.get("pm2_5")
     if pm_now is None:
-        pm_now = ahead[0][1]
-    now_time = parse_utc(cur["time"]) if cur.get("time") else hour0
-    mean24 = sum(past) / len(past)
+        raise ValueError("no current pm2_5")
     bands = load_config("bands")
-    return {
-        "school_id": school["school_id"], "lat": school["lat"], "lon": school["lon"],
-        "generated_at": iso_z(now), "source": "open-meteo-cams",
-        "now": {"time": iso_z(now_time), "pm25": round(pm_now, 1), "pm25_24h_mean": round(mean24, 1),
-                "aqi": cpcb_pm25_aqi(mean24, bands), "aqi_basis": AQI_BASIS, "band": band_for(pm_now, bands)},
-        "hours": [{"time": iso_z(t), "pm25": round(v, 1), "band": band_for(v, bands)} for t, v in ahead],
-    }
+    aqi, cat = epa_aqi(pm_now, bands)
+    current = {"aqi": aqi, "pm25": round(pm_now, 1), "category": cat, "source": LIVE_SOURCE,
+               "recorded_at": iso_z(parse_utc(cur["time"]) if cur.get("time") else hour0)}
+    if cur.get("pm10") is not None:
+        current["pm10"] = round(cur["pm10"], 1)
+    forecast = []
+    for t, pm in ahead:
+        a, c = epa_aqi(pm, bands)
+        forecast.append({"hour": iso_z(t), "aqi": a, "pm25": round(pm, 1), "category": c})
+    return {"current": current, "forecast": forecast, "metadata": _metadata(now)}
 
 
 def fetch_forecast(school, now=None, day=None):
-    """`forecast` contract for a School. Never raises: falls back to mocks/forecast.json, with its
-    timestamps shifted by whole days onto `day` (default: today IST) so the sample day lines up."""
+    """AirQualityResponse for a contract School. Never raises: falls back to mocks/forecast.json,
+    with its timestamps shifted by whole days onto `day` (default: today IST)."""
     load_env()
     now = now or utcnow()
     try:
-        out = _from_open_meteo(school, now)
+        return _from_open_meteo(school, now)
     except Exception as exc:  # noqa: BLE001 - any failure degrades to mocks
         print(f"[airquality] Open-Meteo failed ({exc!r}); using mocks/forecast.json", file=sys.stderr)
-        out = copy.deepcopy(load_json(MOCKS / "forecast.json"))
-        shift = mock_shift_days(day or now.astimezone(IST).date())
-        out.update(school_id=school["school_id"], lat=school["lat"], lon=school["lon"], source="sample",
-                   generated_at=iso_z(now))
-        out["now"]["time"] = shift_iso(out["now"]["time"], shift)
-        for h in out["hours"]:
-            h["time"] = shift_iso(h["time"], shift)
-        return out
-    token = os.environ.get("WAQI_TOKEN")
-    if token:
-        try:
-            out["now"]["station"] = fetch_waqi_station(school["lat"], school["lon"], token)
-        except Exception as exc:  # noqa: BLE001 - optional extra
-            print(f"[airquality] WAQI skipped ({exc!r})", file=sys.stderr)
+    out = copy.deepcopy(load_json(MOCKS / "forecast.json"))
+    shift = mock_shift_days(day or now.astimezone(IST).date())
+    out["current"]["recorded_at"] = shift_iso(out["current"]["recorded_at"], shift)
+    for p in out["forecast"]:
+        p["hour"] = shift_iso(p["hour"], shift)
+    out["metadata"] = _metadata(now)
     return out
 
 

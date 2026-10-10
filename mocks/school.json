@@ -1,46 +1,8 @@
 {
- "school_id": "sample-dwarka",
- "name": "Sample Public School, Dwarka (demo)",
- "name_hi": "सैंपल पब्लिक स्कूल, द्वारका (डेमो)",
- "lat": 28.59,
- "lon": 77.05,
- "district": "South West Delhi",
- "state": "Delhi",
- "alert_emails": [
-  "principal@example.com"
- ],
- "schedule": [
-  {
-   "slot_id": "assembly",
-   "label": "Morning assembly",
-   "label_hi": "सुबह की प्रार्थना सभा",
-   "start": "07:40",
-   "end": "08:00",
-   "outdoor": true
-  },
-  {
-   "slot_id": "recess",
-   "label": "Recess",
-   "label_hi": "मध्यावकाश",
-   "start": "10:40",
-   "end": "11:10",
-   "outdoor": true
-  },
-  {
-   "slot_id": "pe",
-   "label": "PE (Classes 6-8)",
-   "label_hi": "खेलकूद (कक्षा 6-8)",
-   "start": "14:00",
-   "end": "14:40",
-   "outdoor": true
-  },
-  {
-   "slot_id": "dispersal",
-   "label": "Dispersal",
-   "label_hi": "छुट्टी",
-   "start": "14:40",
-   "end": "15:00",
-   "outdoor": true
-  }
- ]
+ "id": "sch_dwarka_02",
+ "name": "Kendriya Vidyalaya, Dwarka",
+ "address": "Sector 8, Dwarka, New Delhi 110077",
+ "latitude": 28.5823,
+ "longitude": 77.05,
+ "district": "South West Delhi"
 }

@@ -194,7 +194,7 @@ def build_trace(school, wind, fires, target_time, kind="now", *, hours_back=24, 
     wind_source = wind_source or getattr(wind, "source", "sample")
     fire_source = fire_source or "sample"
 
-    fine = back_trajectory(wind, school["lat"], school["lon"], target_time, hours_back, step_minutes)
+    fine = back_trajectory(wind, school["latitude"], school["longitude"], target_time, hours_back, step_minutes)
     matched = match_fires(fine, fires, corridor_km)
     by_district = group_by_district(matched, districts_cfg)
     frp_total = round(sum(m["frp_mw"] for m in matched), 1)
@@ -202,10 +202,10 @@ def build_trace(school, wind, fires, target_time, kind="now", *, hours_back=24, 
 
     per_hour = max(1, int(round(60 / step_minutes)))
     six_h = fine[min(len(fine) - 1, 6 * per_hour)]
-    upwind = bearing_deg(school["lat"], school["lon"], six_h[1], six_h[2])
+    upwind = bearing_deg(school["latitude"], school["longitude"], six_h[1], six_h[2])
 
     return {
-        "school_id": school["school_id"],
+        "school_id": school["id"],
         "kind": kind,
         "target_time": iso_z(target_time),
         "generated_at": iso_z(generated_at or utcnow()),
@@ -216,7 +216,7 @@ def build_trace(school, wind, fires, target_time, kind="now", *, hours_back=24, 
         "params": {"hours_back": hours_back, "step_minutes": step_minutes, "corridor_km": corridor_km,
                    "frp_threshold_mw": frp_threshold_mw, "min_fires": min_fires,
                    "wind_level": getattr(wind, "level", "120m")},
-        "origin": {"lat": school["lat"], "lon": school["lon"]},
+        "origin": {"lat": school["latitude"], "lon": school["longitude"]},
         "path": [{"time": iso_z(p[0]), "lat": round(p[1], 4), "lon": round(p[2], 4),
                   "wind_speed_ms": round(p[3], 2), "wind_from_deg": round(p[4], 1)}
                  for p in fine[::per_hour]],

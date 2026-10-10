@@ -73,5 +73,52 @@
         "category": "Severe"
       }
     ]
+  },
+  "us_epa_pm25_aqi": {
+    "_note": "US-EPA AQI breakpoints for PM2.5 (Feb 2024 revision), ug/m3 truncated to 0.1 -> AQI. Contracts use EPA categories. EPA defines the AQI on a 24 h average; we apply it to each hourly model value, so it is indicative.",
+    "breakpoints": [
+      {
+        "c_lo": 0.0,
+        "c_hi": 9.0,
+        "i_lo": 0,
+        "i_hi": 50,
+        "category": "good"
+      },
+      {
+        "c_lo": 9.1,
+        "c_hi": 35.4,
+        "i_lo": 51,
+        "i_hi": 100,
+        "category": "moderate"
+      },
+      {
+        "c_lo": 35.5,
+        "c_hi": 55.4,
+        "i_lo": 101,
+        "i_hi": 150,
+        "category": "unhealthy_sensitive"
+      },
+      {
+        "c_lo": 55.5,
+        "c_hi": 125.4,
+        "i_lo": 151,
+        "i_hi": 200,
+        "category": "unhealthy"
+      },
+      {
+        "c_lo": 125.5,
+        "c_hi": 225.4,
+        "i_lo": 201,
+        "i_hi": 300,
+        "category": "very_unhealthy"
+      },
+      {
+        "c_lo": 225.5,
+        "c_hi": 325.4,
+        "i_lo": 301,
+        "i_hi": 500,
+        "category": "hazardous"
+      }
+    ]
   }
 }

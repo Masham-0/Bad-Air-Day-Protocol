@@ -9,7 +9,7 @@ from data.smoketrace.sources import GridWind  # noqa: E402
 from data.smoketrace.trace import bearing_deg, build_trace, destination, haversine_km  # noqa: E402
 
 T = datetime(2026, 10, 12, 8, 30, tzinfo=timezone.utc)
-SCHOOL = {"school_id": "t", "lat": 28.59, "lon": 77.05}
+SCHOOL = {"id": "t", "name": "Test school", "latitude": 28.59, "longitude": 77.05}
 
 
 class ConstantWind:
@@ -26,8 +26,8 @@ def test_back_trajectory_goes_upwind():
     """Wind FROM 315 deg at 5 m/s for 24 h -> parcel ~432 km to the north-west of school."""
     tr = build_trace(SCHOOL, ConstantWind(5.0, 315.0), [], T, hours_back=24)
     end = tr["path"][-1]
-    dist = haversine_km(SCHOOL["lat"], SCHOOL["lon"], end["lat"], end["lon"])
-    brg = bearing_deg(SCHOOL["lat"], SCHOOL["lon"], end["lat"], end["lon"])
+    dist = haversine_km(SCHOOL["latitude"], SCHOOL["longitude"], end["lat"], end["lon"])
+    brg = bearing_deg(SCHOOL["latitude"], SCHOOL["longitude"], end["lat"], end["lon"])
     assert abs(dist - 432.0) < 5, dist
     assert abs(brg - 315.0) < 3, brg
     assert end["time"] == "2026-10-11T08:30:00Z"
@@ -37,7 +37,7 @@ def test_back_trajectory_goes_upwind():
 
 def test_fire_matching_corridor_time_and_confidence():
     wind = ConstantWind(5.0, 315.0)
-    on = destination(SCHOOL["lat"], SCHOOL["lon"], 315, 200)        # passed ~11.1 h before arrival
+    on = destination(SCHOOL["latitude"], SCHOOL["longitude"], 315, 200)        # passed ~11.1 h before arrival
     off = destination(on[0], on[1], 45, 60)                            # 60 km off the path
     passed = T - timedelta(hours=200 / 18.0)
 
@@ -63,8 +63,8 @@ def test_fire_matching_corridor_time_and_confidence():
 def test_districts_headline_and_gridwind():
     """Fires near Kaithal HQ group to Kaithal/Haryana; EN+HI headlines name it. GridWind interpolates u/v."""
     kaithal = (29.80, 76.40)
-    wind = ConstantWind(4.0, bearing_deg(SCHOOL["lat"], SCHOOL["lon"], *kaithal))
-    passed = T - timedelta(hours=haversine_km(SCHOOL["lat"], SCHOOL["lon"], *kaithal) / 14.4)
+    wind = ConstantWind(4.0, bearing_deg(SCHOOL["latitude"], SCHOOL["longitude"], *kaithal))
+    passed = T - timedelta(hours=haversine_km(SCHOOL["latitude"], SCHOOL["longitude"], *kaithal) / 14.4)
     acq = (passed - timedelta(hours=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
     fires = [{"lat": kaithal[0] + d, "lon": kaithal[1] - d, "frp_mw": 40.0, "acq_time": acq, "confidence": "h"}
              for d in (0.0, 0.02, 0.04, 0.06)]
