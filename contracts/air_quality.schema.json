@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "air_quality.schema.json",
+  "title": "AirQualityResponse",
+  "description": "Current air quality reading and 24-hour forecast for a given location.",
+  "type": "object",
+  "required": ["current", "forecast", "metadata"],
+  "properties": {
+    "current": {
+      "$ref": "#/definitions/AirQualityReading"
+    },
+    "forecast": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ForecastPoint" },
+      "description": "Hourly forecast points for the next 24 hours."
+    },
+    "metadata": {
+      "$ref": "#/definitions/ResponseMetadata"
+    }
+  },
+  "definitions": {
+    "AqiCategory": {
+      "type": "string",
+      "enum": ["good", "moderate", "unhealthy_sensitive", "unhealthy", "very_unhealthy", "hazardous"],
+      "description": "EPA AQI category."
+    },
+    "AirQualityReading": {
+      "type": "object",
+      "required": ["aqi", "pm25", "category", "source", "recorded_at"],
+      "properties": {
+        "aqi": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 500,
+          "description": "Air Quality Index value (0-500)."
+        },
+        "pm25": {
+          "type": "number",
+          "minimum": 0,
+          "description": "PM2.5 concentration in µg/m³."
+        },
+        "pm10": {
+          "type": "number",
+          "minimum": 0,
+          "description": "PM10 concentration in µg/m³."
+        },
+        "category": { "$ref": "#/definitions/AqiCategory" },
+        "source": {
+          "type": "string",
+          "description": "Data source name (e.g. 'CPCB Delhi', 'PurpleAir')."
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of the reading."
+        }
+      }
+    },
+    "ForecastPoint": {
+      "type": "object",
+      "required": ["hour", "aqi", "pm25", "category"],
+      "properties": {
+        "hour": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of the forecast hour."
+        },
+        "aqi": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 500
+        },
+        "pm25": {
+          "type": "number",
+          "minimum": 0
+        },
+        "category": { "$ref": "#/definitions/AqiCategory" }
+      }
+    },
+    "ResponseMetadata": {
+      "type": "object",
+      "required": ["request_id", "generated_at"],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "cache_ttl_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 300
+        }
+      }
+    }
+  }
+}

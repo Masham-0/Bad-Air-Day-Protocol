@@ -1,0 +1,51 @@
+{
+  "school_id": "sch_anand_vihar_01",
+  "date": "2026-10-10",
+  "overall_status": "restricted",
+  "overall_message": "Air quality is Unhealthy (AQI 156). Outdoor activities are restricted. All physical activities moved indoors or cancelled.",
+  "activities": [
+    {
+      "activity": "Morning Assembly",
+      "scheduled_time": "07:30–08:00",
+      "decision": "indoors",
+      "reason": "AQI 156 exceeds safe threshold for prolonged outdoor gatherings.",
+      "alternative": "Conduct assembly in the auditorium."
+    },
+    {
+      "activity": "PE – Outdoor Sports",
+      "scheduled_time": "09:00–09:45",
+      "decision": "restricted",
+      "reason": "Vigorous physical activity is unsafe at AQI 156 (Unhealthy).",
+      "alternative": "Indoor stretching and yoga in the gymnasium."
+    },
+    {
+      "activity": "Recess – Playground",
+      "scheduled_time": "10:30–11:00",
+      "decision": "restricted",
+      "reason": "Extended outdoor exposure not recommended for children at this AQI level.",
+      "alternative": "Indoor recess in classrooms with board games and reading."
+    },
+    {
+      "activity": "Lunch Break",
+      "scheduled_time": "12:30–13:15",
+      "decision": "indoors",
+      "reason": "Forecast shows AQI improving to ~132 by 13:00 but still above safe threshold.",
+      "alternative": "Eat in the cafeteria; windows closed."
+    },
+    {
+      "activity": "Afternoon Sports Practice",
+      "scheduled_time": "15:00–16:00",
+      "decision": "indoors",
+      "reason": "AQI forecast ~105 (Unhealthy for Sensitive Groups). Safe for brief exposure but practice moved indoors as precaution.",
+      "alternative": "Indoor drills and fitness exercises."
+    },
+    {
+      "activity": "Dismissal – Walking Students",
+      "scheduled_time": "16:00–16:30",
+      "decision": "outdoors",
+      "reason": "Brief outdoor exposure for dismissal is acceptable. AQI forecast ~95 (Moderate).",
+      "alternative": null
+    }
+  ],
+  "generated_at": "2026-10-10T06:00:00+05:30"
+}
