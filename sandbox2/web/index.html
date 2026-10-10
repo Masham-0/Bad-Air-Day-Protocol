@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bad-Air Day Protocol</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true"></span>
+    <div>
+      <h1>Bad-Air Day Protocol</h1>
+      <p class="sub" id="plan-date">Loading…</p>
+    </div>
+  </div>
+  <div class="controls">
+    <label class="select"><span class="sr">School</span><select id="school"></select></label>
+    <div class="seg" role="group" aria-label="Language">
+      <button data-lang="en" aria-pressed="true">EN</button>
+      <button data-lang="hi" aria-pressed="false">हिंदी</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero card" id="hero" aria-live="polite">
+    <div class="status">
+      <div class="badges" id="badges"></div>
+      <p class="status-word" id="status-word">—</p>
+      <p class="status-msg" id="status-msg"></p>
+      <div class="cites" id="status-cites"></div>
+    </div>
+    <div class="now" id="now">
+      <p class="label" data-i18n="now">Air now</p>
+      <p class="aqi"><span id="now-aqi">—</span><small>AQI</small></p>
+      <p class="pill" id="now-cat"></p>
+      <p class="muted" id="now-pm"></p>
+      <p class="muted tiny" id="now-src"></p>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card" id="plan-card">
+      <div class="head">
+        <h2 data-i18n="plan">Today's plan</h2>
+        <button class="btn" id="regen" data-i18n="regen">Regenerate plan</button>
+      </div>
+      <ol class="plan" id="plan"></ol>
+      <p class="muted tiny" id="engine"></p>
+    </section>
+
+    <section class="card" id="smoke-card">
+      <div class="head">
+        <h2 data-i18n="smoke">Where is the smoke from?</h2>
+        <div class="seg" role="group" aria-label="Trace time">
+          <button data-trace="now" aria-pressed="false" data-i18n="trace_now">Now</button>
+          <button data-trace="afternoon" aria-pressed="true">14:00</button>
+        </div>
+      </div>
+      <p class="headline" id="smoke-headline"></p>
+      <div class="map" id="map"></div>
+      <div class="key" id="map-key"></div>
+      <dl class="stats" id="smoke-stats"></dl>
+      <p class="muted tiny" data-i18n="indicative">Indicative: a single-level (120 m) wind back-trajectory matched to NASA FIRMS fire detections, not a dispersion model.</p>
+    </section>
+  </div>
+
+  <section class="card" id="forecast-card">
+    <div class="head">
+      <h2 data-i18n="forecast">Next 24 hours</h2>
+      <p class="muted tiny" data-i18n="forecast_note">US-EPA AQI from hourly PM2.5 (indicative). Shaded: school hours. Dashed: AQI 100.</p>
+    </div>
+    <div class="chart" id="chart"></div>
+  </section>
+
+  <div class="grid">
+    <section class="card" id="notices-card">
+      <div class="head"><h2 data-i18n="notices">Parent notices</h2></div>
+      <div id="notices"></div>
+    </section>
+
+    <section class="card" id="alerts-card">
+      <div class="head">
+        <h2 data-i18n="alerts">Alert email</h2>
+        <div class="actions">
+          <button class="btn" id="send-alert" data-i18n="send">Send test alert</button>
+          <button class="btn ghost" id="run-job" data-i18n="job">Run 06:00 job</button>
+        </div>
+      </div>
+      <ul class="alerts" id="alerts"></ul>
+      <pre class="email" id="email" hidden></pre>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <p data-i18n="disclaimer">Indicative guidance from model forecasts (CAMS via Open-Meteo) and an indicative smoke trace. Activity limits are a school rule, not an official standard. Official GRAP/CAQM and Directorate of Education orders always take precedence.</p>
+  <p class="tiny">Prototype 2 · sandbox-A · <a id="api-link" href="health">API</a></p>
+</footer>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
