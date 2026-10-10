@@ -149,6 +149,22 @@ python -m data.ingest.airquality        # AirQualityResponse for mocks/school.js
 python -m data.smoketrace.sources       # live wind grid + NASA FIRMS fire count
 ```
 
+## Smoke test
+
+`api/tests/smoke_api.py` checks any running API: the local mock server, or the deployed URL later. It uses the standard
+library only, and validates with `jsonschema` when that's installed (falling back to a built-in check).
+
+```bash
+python api/tests/smoke_api.py                       # default http://localhost:8000
+python api/tests/smoke_api.py "$NEXT_PUBLIC_API_BASE_URL"
+```
+
+It prints one PASS or FAIL line per check, with the status code and the time taken, and exits 1 if anything fails:
+- the four routes return 200, with the CORS header and a body that matches their contract
+- an unknown school returns 404 with the error envelope
+- the CORS preflight allows `content-type`
+- any response slower than 29 s is flagged
+
 ## Open questions
 
 1. **Smoke trace has no route or contract.** CLAUDE.md treats it as core (the "smoke likely by 14:00, so PE moves indoors"
