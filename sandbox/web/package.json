@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "sync-mock": "node -e \"require('fs').copyFileSync('../mocks/today-bundle.json','public/mock-today-bundle.json')\"",
+    "sync-mock": "node -e \"const fs=require('fs');fs.mkdirSync('public',{recursive:true});fs.copyFileSync('../mocks/today-bundle.json','public/mock-today-bundle.json')\"",
     "dev": "npm run sync-mock && next dev",
     "build": "npm run sync-mock && next build",
     "typecheck": "tsc --noEmit"
