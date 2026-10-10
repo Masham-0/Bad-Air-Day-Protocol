@@ -1,0 +1,4 @@
+# Lambda runtime already provides boto3. Only the agent needs strands-agents.
+strands-agents
+jsonschema
+referencing
