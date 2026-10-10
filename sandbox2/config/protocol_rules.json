@@ -1,0 +1,39 @@
+{
+  "_note": "Team rule for the prototype planner, NOT an official standard. AQI is the US-EPA PM2.5 AQI the data layer computes (indicative: hourly model values). AQI 100 is Yash's safe line in the web app. Official GRAP/CAQM and Directorate of Education orders always win.",
+  "decision_max_aqi": {
+    "_note": "Per activity intensity: outdoors up to `outdoors`, moved indoors up to `indoors`, restricted (cancelled) above it.",
+    "vigorous": {"outdoors": 100, "indoors": 150},
+    "moderate": {"outdoors": 100, "indoors": 200},
+    "light": {"outdoors": 150, "indoors": 300}
+  },
+  "status_max_aqi": {
+    "_note": "Overall status from the worst forecast AQI during school hours. Above `restricted` is emergency.",
+    "all_clear": 100,
+    "caution": 150,
+    "restricted": 200
+  },
+  "smoke": {
+    "_note": "If the indicative smoke trace for that part of the day says smoke_likely, every outdoor activity is one step stricter, and the day is at least caution. Afternoon = slots starting at or after this IST time.",
+    "afternoon_from_ist": "12:00"
+  },
+  "default_schedule": [
+    {"activity": "Morning Assembly", "activity_hi": "सुबह की प्रार्थना सभा", "start": "07:30", "end": "08:00", "intensity": "light",
+     "indoors": "Hold assembly in the hall or over the PA system.", "indoors_hi": "प्रार्थना सभा हॉल में या माइक से कक्षाओं में करें।",
+     "restricted": "Skip assembly; class teachers take attendance in classrooms.", "restricted_hi": "प्रार्थना सभा न करें; कक्षा में ही हाज़िरी लें।"},
+    {"activity": "PE – Outdoor Sports", "activity_hi": "खेल-कूद (पीटी)", "start": "09:00", "end": "09:45", "intensity": "vigorous",
+     "indoors": "Light indoor PE: stretching, yoga or table tennis in the hall.", "indoors_hi": "हॉल में हल्की कसरत: स्ट्रेचिंग, योग या टेबल टेनिस।",
+     "restricted": "No PE today; use the period for a health talk or reading.", "restricted_hi": "आज पीटी नहीं; इस समय स्वास्थ्य पर बातचीत या पढ़ाई करें।"},
+    {"activity": "Recess – Playground", "activity_hi": "मध्यावकाश (मैदान)", "start": "10:30", "end": "11:00", "intensity": "moderate",
+     "indoors": "Indoor recess in classrooms, windows closed.", "indoors_hi": "मध्यावकाश कक्षा में, खिड़कियाँ बंद रखें।",
+     "restricted": "Short indoor break only; no running in corridors.", "restricted_hi": "केवल छोटा ब्रेक कक्षा में; गलियारों में दौड़ना नहीं।"},
+    {"activity": "Lunch Break", "activity_hi": "दोपहर का भोजन", "start": "12:30", "end": "13:15", "intensity": "light",
+     "indoors": "Eat in classrooms or the cafeteria, windows closed.", "indoors_hi": "भोजन कक्षा या कैंटीन में करें, खिड़कियाँ बंद रखें।",
+     "restricted": "Eat in classrooms; no outdoor play after lunch.", "restricted_hi": "भोजन कक्षा में; खाने के बाद बाहर खेलना नहीं।"},
+    {"activity": "Afternoon Sports Practice", "activity_hi": "दोपहर का खेल अभ्यास", "start": "15:00", "end": "16:00", "intensity": "vigorous",
+     "indoors": "Indoor drills and light fitness in the hall.", "indoors_hi": "हॉल में हल्का अभ्यास और फ़िटनेस।",
+     "restricted": "Cancel practice; students go home at dismissal.", "restricted_hi": "अभ्यास रद्द; छात्र छुट्टी पर घर जाएँ।"},
+    {"activity": "Dismissal – Walking Students", "activity_hi": "छुट्टी (पैदल जाने वाले छात्र)", "start": "16:00", "end": "16:30", "intensity": "light",
+     "indoors": "Students wait inside until their pickup arrives; masks on for the walk home.", "indoors_hi": "बच्चे लेने वाले के आने तक अंदर रुकें; घर जाते समय मास्क पहनें।",
+     "restricted": "Staggered pickup from inside the building only; masks on.", "restricted_hi": "केवल इमारत के अंदर से बारी-बारी से छुट्टी; मास्क पहनें।"}
+  ]
+}
