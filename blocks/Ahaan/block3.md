@@ -1,9 +1,12 @@
-# Ahaan 3: Read endpoints
+# Ahaan 3: Route smoke test
 
-Scope: api/handlers/get_dashboard.py, get_forecast.py, get_school.py
+Scope: api/tests/smoke_api.py
 
 Tasks:
-- Return prepared data from services, never raw table items
-- Validate path and query parameters, return 400 and 404 correctly
+- stdlib-only script taking a base URL argument, default http://localhost:8787
+- Hit all four routes, print PASS or FAIL per route with the status code
+- Validate the GET /today body against the TodayBundle schema in contracts/ using jsonschema
+- Check that an unknown school returns 404 with the error envelope
+- Check the CORS header is present
 
-Done when: All three handlers pass tests for success, bad input and missing school.
+Done when: The script prints PASS for every route against the local server and exits non-zero on any failure.

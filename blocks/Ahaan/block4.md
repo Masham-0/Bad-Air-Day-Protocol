@@ -1,9 +1,11 @@
-# Ahaan 4: Protocol generation
+# Ahaan 4: Consistency review
 
-Scope: api/handlers/generate_protocol.py, api/services/protocol_service.py
+Scope: api/README.md, api/tests/
 
 Tasks:
-- Call Masham's generate_protocol function, persist the validated plan, return it
-- Fall back to the latest stored plan on agent failure and flag it in the response
+- Compare infra/lambda/handlers.py against api/README.md: routes, status codes, error shape, CORS, response bodies
+- Do NOT edit handlers.py or anything in infra/
+- Produce a mismatch list at the bottom of api/README.md with the owner and exact change for each item
+- Fix mismatches that live in api/ only
 
-Done when: Generation works with a stubbed agent and failure fallback is tested.
+Done when: Every mismatch is either fixed in api/ or listed with its owner, and nothing outside api/ was modified.

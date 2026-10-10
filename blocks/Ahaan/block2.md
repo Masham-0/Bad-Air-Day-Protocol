@@ -1,10 +1,11 @@
-# Ahaan 2: Services and DynamoDB access
+# Ahaan 2: Local mock API
 
-Scope: api/services/
+Scope: api/mock_server.py
 
 Tasks:
-- dashboard_service and protocol_service with a storage interface
-- In-memory implementation first, DynamoDB implementation second
-- Table names and region from environment variables
+- First check scripts/local_api.py. If it already serves all four routes on :8787, document it in api/README.md and skip the new server
+- Otherwise write a stdlib-only server on :8787 that serves the four routes from mocks/ with open CORS and the error envelope
+- POST /protocol returns 202 and then serves the mock plan on the next GET /today
+- No new dependencies
 
-Done when: Services pass tests against the in-memory store; DynamoDB store is selectable by env var.
+Done when: Anyone runs one command, the web app loads against http://localhost:8787, and all four routes respond.

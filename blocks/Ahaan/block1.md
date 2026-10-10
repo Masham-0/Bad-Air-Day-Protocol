@@ -1,9 +1,13 @@
-# Ahaan 1: Mock handlers from contracts
+# Ahaan 1: API cheat sheet
 
-Scope: api/handlers/, api/tests/
+Scope: api/README.md
 
 Tasks:
-- Implement all five handlers returning contracts/examples data
-- Standard response envelope, CORS headers, error format
+- Read CLAUDE.md and contracts/README.md first
+- Document exactly four routes: GET /schools/{id}/today, POST /schools/{id}/protocol (202, async), POST /schools/{id}/alert/test, PUT /schools/{id}
+- For each route: purpose, request body, response shape (name the contract file), status codes, and a curl example
+- Document one error envelope for every failure: {"error": {"code": "...", "message": "..."}}
+- State the rules everyone can rely on: no auth, CORS open, all timestamps UTC with Z, base URL comes from NEXT_PUBLIC_API_URL
+- Do not invent fields. Anything not in contracts/ is listed under Open questions
 
-Done when: Handlers return valid JSON matching the contracts when invoked locally with a sample event.
+Done when: A teammate can call every route from api/README.md alone, and every response shape points to a real file in contracts/.
