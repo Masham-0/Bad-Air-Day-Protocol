@@ -1,27 +1,29 @@
 # API cheat sheet
 
-Four routes, one error envelope. Every response shape below is defined by a file in `contracts/`. Anything that has no
-contract yet is listed under [Open questions](#open-questions).
-
-> **Where the contracts are right now:** the files named here (`today-bundle.schema.json`, `school.schema.json`,
-> `protocol.schema.json`, `alert.schema.json`) live in `sandbox/contracts/` on the `sandbox-A` branch. They move to
-> `contracts/` on `dev` once Krishna and Masham approve them (open question 1).
+The four routes the web app calls (`web/src/lib/api-client.ts`). Every response shape is a file in `contracts/`, with an
+example in `contracts/examples/`. Anything without a contract yet is listed under [Open questions](#open-questions).
 
 ## Rules you can rely on
 
-- **Base URL:** read it from `NEXT_PUBLIC_API_URL`, with no trailing slash. Locally that's `http://localhost:8787` (see below).
+- **Base URL:** `NEXT_PUBLIC_API_BASE_URL`, with no trailing slash. The client defaults to `http://localhost:8000`.
+- **Mock mode:** `NEXT_PUBLIC_USE_MOCK` is **on unless it's exactly `"false"`**. In mock mode the client never calls the API;
+  it serves the `contracts/examples` data inlined in `api-client.ts`. Set it to `false` to use the API.
 - **No auth.** There are no API keys, cookies or Cognito.
-- **CORS is open:** `Access-Control-Allow-Origin: *`, with methods `GET, POST, PUT, OPTIONS` and header `content-type`.
-  Preflight `OPTIONS` requests get a `204`.
-- **JSON everywhere:** `content-type: application/json; charset=utf-8`. Hindi text is UTF-8 Devanagari.
-- **Times:**
-  - Every timestamp is UTC and ends in `Z` (`2026-10-12T01:30:00Z`). Display it in IST (UTC+05:30).
-  - Schedule and window times are IST wall-clock `HH:MM`.
-  - `date` is an IST calendar date (`YYYY-MM-DD`).
-- **School day:** `date` is today in IST, or **tomorrow once today's last schedule slot has ended**.
-- **Sample data:** wherever `source` (or `air.source`) is `"sample"`, the numbers come from mocks, not live feeds. Show a SAMPLE badge.
-- **Smoke traces** are always `"indicative": true` (a wind back-trajectory, not a dispersion model). Say so in the UI.
-- **Bands** (`green`, `amber`, `red`) are a team rule, not an official standard.
+- **CORS is open.** The client sends `Content-Type: application/json` even on GET requests, so browsers send a preflight
+  `OPTIONS` first. The API must answer `OPTIONS` with `204` and these headers: `Access-Control-Allow-Origin: *`,
+  `Access-Control-Allow-Headers: content-type`, `Access-Control-Allow-Methods: GET, OPTIONS`.
+- **JSON everywhere:** `content-type: application/json; charset=utf-8`.
+- **Timestamps** are ISO 8601 `date-time` values:
+  - The backend sends **UTC with `Z`** (`2026-10-12T01:00:00Z`).
+  - The contract examples use `+05:30` offsets. Both are valid, so parse them as dates and never compare the strings.
+  - Display everything in IST.
+- **`date`** fields are IST calendar dates (`YYYY-MM-DD`).
+- **AQI:**
+  - The contracts use US-EPA categories (`good`, `moderate`, `unhealthy_sensitive`, `unhealthy`, `very_unhealthy`, `hazardous`).
+  - The backend computes the AQI from PM2.5 using the EPA's February 2024 breakpoints (`data/config/bands.json`), applied
+    to each hourly model value. That makes it indicative, not an official reading.
+- **Sample data:** the contracts have no sample flag, so sample readings carry `current.source` starting with `"SAMPLE:"`.
+  Show a SAMPLE badge whenever it does.
 - **Timeout:** API Gateway cuts requests off at **29 s**.
 
 ## Error envelope
@@ -29,151 +31,108 @@ contract yet is listed under [Open questions](#open-questions).
 Every failure, on every route, returns this body with the matching status code:
 
 ```json
-{"error": {"code": "not_found", "message": "unknown school no-such-school"}}
+{"error": {"code": "not_found", "message": "unknown school sch_nope"}}
 ```
 
 | Status | `code` | When |
 |---|---|---|
-| 400 | `bad_request` | The body isn't valid JSON, or the PUT body fails `school.schema.json` |
+| 400 | `bad_request` | A path parameter is malformed |
 | 404 | `not_found` | Unknown school id or unknown route |
-| 500 | `internal` | Anything unexpected. `message` is safe to show and never contains a stack trace |
+| 500 | `internal` | Anything unexpected. `message` never contains a stack trace |
 
-`code` values are lower-case strings, so a client can branch on `code` and show `message` to people.
+The current client checks only the status code (`apiFetch` throws when `!res.ok`), so `message` is for people and logs.
 
 ## Routes
 
-Set the base URL once to use the examples:
-
 ```bash
-API=${NEXT_PUBLIC_API_URL:-http://localhost:8787}
+API=${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
 ```
 
-### 1. `GET /schools/{id}/today`
+### 1. `GET /schools`
 
-**Purpose:** everything the dashboard needs for the school day, in one call: school, air now plus 24 h forecast,
-both smoke traces, the plan (if one exists) and the alerts already sent.
+**Purpose:** the list of schools for the school selector.
 
-- **Request body:** none.
-- **200:** a TodayBundle, per `contracts/today-bundle.schema.json`. Top-level keys: `school`, `date`, `generated_at`, `air`
-  (`forecast.schema.json`), `smoke.now` and `smoke.afternoon` (`trace.schema.json`), `plan` (`protocol.schema.json`, or
-  `null` until generated), and `alerts` (an array of `alert.schema.json`).
+- **200:** `SchoolListResponse`, per `contracts/school.schema.json` (example: `contracts/examples/sample_schools.json`):
+  `{"schools": [{"id", "name", "address"?, "latitude", "longitude", "district"?}]}`
+- **500:** unexpected error.
+
+```bash
+curl -s "$API/schools"
+```
+
+### 2. `GET /schools/{id}/air-quality`
+
+**Purpose:** PM2.5 now, plus an hourly forecast for the next 24 hours.
+
+- **200:** `AirQualityResponse`, per `contracts/air_quality.schema.json` (example: `contracts/examples/sample_readings.json`):
+  - `current`: `{aqi, pm25, pm10?, category, source, recorded_at}`
+  - `forecast`: 24 × `{hour, aqi, pm25, category}`, starting the hour after `current`
+  - `metadata`: `{request_id, generated_at, cache_ttl_seconds?}`
 - **404:** unknown school. **500:** unexpected error.
-- **Timing:** if no data is stored for the school yet, or it's more than 2 h old, the API fetches it on the spot. That took
-  **about 15 s** with live data. Normally the hourly ingest job has already stored it, and the call is fast.
+- **Produced by:** `data/ingest/airquality.py`, via `fetch_forecast(school)`. The data is the CAMS model via Open-Meteo, a
+  forecast and not a sensor. If Open-Meteo fails, it falls back to the sample day (`current.source` starts with `"SAMPLE:"`).
 
 ```bash
-curl -s "$API/schools/sample-dwarka/today"
+curl -s "$API/schools/sch_dwarka_02/air-quality"
 ```
 
-### 2. `POST /schools/{id}/protocol`
+### 3. `GET /schools/{id}/protocol`
 
-**Purpose:** ask the agent to (re)write the day's plan. The call returns immediately, and the agent runs in the background.
+**Purpose:** the day's plan, with one decision per activity.
 
-- **Request body:** none.
-- **202:** `{"status": "accepted", "school_id": "...", "date": "YYYY-MM-DD", "requested_at": "...Z"}`. This body has no
-  contract file yet (open question 2).
+- **200:** `ProtocolResponse`, per `contracts/protocol.schema.json` (example: `contracts/examples/sample_protocol.json`):
+  `{school_id, date, overall_status, overall_message?, activities: [{activity, scheduled_time?, decision, reason, alternative?}], generated_at}`
+  - `overall_status` is one of `all_clear`, `caution`, `restricted`, `emergency`.
+  - `decision` is one of `outdoors`, `indoors`, `restricted`.
+- **404:** unknown school. **500:** unexpected error. (What this route returns before any plan exists is open question 2.)
+- **Produced by:** the agent (Masham).
+
+```bash
+curl -s "$API/schools/sch_dwarka_02/protocol"
+```
+
+### 4. `GET /schools/{id}/notices`
+
+**Purpose:** notices for parents.
+
+- **200:** `ParentNoticeResponse`, per `contracts/parent_notice.schema.json` (example: `contracts/examples/sample_notices.json`):
+  `{school_id, date, notices: [{id, severity, title, body, issued_at, expires_at?}]}`
+  - `severity` is one of `info`, `warning`, `critical`.
 - **404:** unknown school. **500:** unexpected error.
-- **Getting the plan:** poll `GET /today` (every 2 s is fine) until `plan.generated_at >= requested_at`. The plan follows
-  `protocol.schema.json`: one decision per schedule slot, window times, an English and Hindi parent notice, and a
-  `citations` list on every decision, pointing to the TodayBundle values it used. `plan.generator.engine` is
-  `strands-bedrock`, or `rules-fallback` with a `fallback_reason` when Bedrock wasn't available.
 
 ```bash
-curl -s -X POST "$API/schools/sample-dwarka/protocol"
-```
-
-### 3. `POST /schools/{id}/alert/test`
-
-**Purpose:** send the principal's alert email now, the same one the 06:00 IST schedule sends, so it can be shown in the video.
-
-- **Request body:** none.
-- **200:** an Alert, per `contracts/alert.schema.json`, plus a `preview` field holding the full email text. `preview` isn't in
-  the contract yet (open question 3).
-- **404:** unknown school. **500:** unexpected error.
-- **Timing:** if there's no plan for the day yet, this route runs the agent first and **can pass 29 s** with Bedrock. Call
-  `POST /protocol` and wait for the plan before testing the alert.
-- **Delivery:** SNS email goes only to addresses that have confirmed their SNS subscription (see `PUT`).
-
-```bash
-curl -s -X POST "$API/schools/sample-dwarka/alert/test"
-```
-
-### 4. `PUT /schools/{id}`
-
-**Purpose:** create or replace a school profile.
-
-- **Request body:** a School, per `contracts/school.schema.json` (required: `name`, `lat`, `lon`, `schedule`). `school_id` is
-  taken from the path, and any `school_id` in the body is overwritten.
-- **200:** the stored School.
-- **400:** the body isn't JSON, or it fails the schema. **500:** unexpected error.
-- **Side effect:** each address in `alert_emails` gets an SNS confirmation email. Alerts reach it only after the link in
-  that email is clicked.
-
-```bash
-curl -s -X PUT "$API/schools/sample-dwarka" -H 'content-type: application/json' \
-  -d '{"name": "Sample Public School, Dwarka (demo)", "lat": 28.59, "lon": 77.05,
-       "schedule": [{"slot_id": "pe", "label": "PE (Classes 6-8)", "start": "14:00", "end": "14:40", "outdoor": true}]}'
+curl -s "$API/schools/sch_dwarka_02/notices"
 ```
 
 ## Running it locally
 
-There's no separate mock server. The existing `scripts/local_api.py` already serves all four routes on `:8787`. It runs
-the **real** prototype handlers (`infra/lambda/handlers.py`) against a simulated AWS (moto DynamoDB and SNS), so local
-behaviour matches what gets deployed. No AWS account is needed.
-
-**Where it lives:** `sandbox/` on the `sandbox-A` branch, until the sandbox is merged. A separate worktree keeps your
-`dev` checkout untouched.
-
-**Setup (once):** Python 3.11+ (tested on 3.14).
+- **UI work:** keep `NEXT_PUBLIC_USE_MOCK` unset or `true`. The web app then runs entirely from the contract examples.
+- **No local server serves these four routes yet.** The frozen sandbox's `scripts/local_api.py` (on `sandbox-A`) serves the
+  earlier four-route design (`/today`, …) on `:8787`, so it doesn't match. A stdlib mock server for these routes is the
+  natural redo of block 2.
+- **The data you can produce today** (from the repo root, standard library only):
 
 ```bash
-git fetch origin && git worktree add ../bad-air-sandbox sandbox-A
-cd ../bad-air-sandbox/sandbox
-python -m venv .venv && .venv/bin/pip install jsonschema referencing boto3 moto
-```
-
-On Windows, use `.venv\Scripts\python` in place of `.venv/bin/python`.
-
-**The one command:**
-
-```bash
-.venv/bin/python scripts/local_api.py --offline
-```
-
-It prints `local API on http://localhost:8787` and comes pre-loaded with the school `sample-dwarka`.
-
-| Flag | Effect |
-|---|---|
-| `--offline` | Sample data only: the scripted day where smoke arrives by 14:00 and PE moves indoors. Use it for UI work and the video |
-| *(no flag)* | Live Open-Meteo and NASA FIRMS data. Each source falls back to the sample if it fails. The first `GET /today` for a school takes about 15 s |
-| `--port 8788` | A different port, if 8787 is taken |
-
-**Behaviour to know:**
-- **`POST /protocol` returns `202`, and the plan is stored about 0.03 s later** (measured on a cold start). Any client that
-  waits, like a person or the web app's 2-second poll, sees it on the next `GET /today`. A script that fires the GET within
-  milliseconds can miss it, so poll until `plan.generated_at >= requested_at`, as the deployed API also requires.
-- **The plan comes from the rules engine** (`generator.engine: "rules-fallback"`, `fallback_reason: "no AWS credentials
-  (local moto run)"`). With AWS credentials in the environment, the same command calls Bedrock for real, and only Bedrock
-  leaves your machine.
-- **`POST /alert/test` "sends" to the simulated SNS.** No real email goes out, but the alert is recorded and appears under
-  `alerts` in `GET /today`.
-- **`PUT` works for any new school id,** and that school's `GET /today` builds its data on demand.
-- **State is in memory.** Restarting the server starts fresh.
-- **Dependencies:** `strands-agents` isn't needed locally. It's only imported when Bedrock is actually called.
-
-**Pointing the web app at it:** set `NEXT_PUBLIC_API_URL=http://localhost:8787`, and open the app at
-**`http://localhost:3000`**. With `127.0.0.1:3000`, the Next.js 16 dev server blocks its own scripts unless
-`allowedDevOrigins` is set. CORS is open, so any origin can call the API.
-
-```bash
-cd ../bad-air-sandbox/sandbox/web && npm install && NEXT_PUBLIC_API_URL=http://localhost:8787 npm run dev
+python -m data.ingest.airquality        # AirQualityResponse for mocks/school.json (live, or SAMPLE fallback)
+python -m data.smoketrace.sources       # live wind grid + NASA FIRMS fire count
+BADAIR_OFFLINE=1 python -m data.ingest.airquality   # force the sample day
 ```
 
 ## Open questions
 
-1. **Contracts location:** the schemas named above are in `sandbox/contracts/` on `sandbox-A`. They need Krishna's and
-   Masham's approval to move into `contracts/` on `dev`. The skeleton's empty files (`air_quality`, `parent_notice`) would go.
-2. **The 202 body of `POST /protocol`** (`status`, `school_id`, `date`, `requested_at`) has no contract file.
-3. **The `preview` field on `POST /alert/test`** isn't in `alert.schema.json`.
-4. **Error `code` values** (`bad_request`, `not_found`, `internal`) are proposed here. They aren't in any contract yet.
-5. **The prototype `infra/lambda/handlers.py` doesn't use this error envelope yet.** It returns `{"error": "<text>"}`. Block 4 lists the exact change for its owner.
+1. **Smoke trace has no route or contract.** CLAUDE.md treats it as core (the "smoke likely by 14:00, so PE moves indoors"
+   video hook), and `data/smoketrace` already produces it. Proposal: `GET /schools/{id}/smoke` returning
+   `{"now": trace, "afternoon": trace}`, in the shape of `mocks/trace-now.json` (snake_case: `smoke_likely`,
+   `fire_count`, `by_district`, `headline.en` / `headline.hi`, `indicative: true`, …). It needs a contract (Yash, Krishna) and types (Yash).
+2. **Generating a plan:** no route triggers the agent, for example `POST /schools/{id}/protocol` or a schedule. It's also
+   undecided what `GET /protocol` returns before a plan exists (404, or an empty plan?).
+3. **The alert email has no route.** The video needs to show it. Options: invoke the `data/alerts` Lambda directly, or add
+   a test route. Owner?
+4. **Schools:** there's no route to create or update a school, and the list's source (static config? DynamoDB?) isn't decided.
+5. **No sample flag in the contracts.** For now the backend marks sample data with a `"SAMPLE:"` prefix in `current.source`.
+6. **Hindi:** notices and protocol text are plain strings. CLAUDE.md wants an English and a Hindi parent notice. Two
+   notices, or a language field?
+7. **Citations:** CLAUDE.md says every decision cites the numbers it used. `ProtocolResponse` has no field for that.
+8. **Error `code` values** (`bad_request`, `not_found`, `internal`) are proposed here. They aren't in any contract yet.
+9. **Example AQI values** in `contracts/examples/sample_readings.json` match the pre-2024 EPA breakpoints. The backend uses
+   the current ones: 65.3 µg/m³ gives 158, not 156.
