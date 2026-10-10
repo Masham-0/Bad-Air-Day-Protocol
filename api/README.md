@@ -117,11 +117,56 @@ curl -s -X PUT "$API/schools/sample-dwarka" -H 'content-type: application/json' 
 
 ## Running it locally
 
-The sandbox ships a local server for these four routes on `:8787`. It runs on a simulated AWS (moto), so no AWS account is
-needed, and it's pre-loaded with `sample-dwarka`:
+There's no separate mock server. The existing `scripts/local_api.py` already serves all four routes on `:8787`. It runs
+the **real** prototype handlers (`infra/lambda/handlers.py`) against a simulated AWS (moto DynamoDB and SNS), so local
+behaviour matches what gets deployed. No AWS account is needed.
+
+**Where it lives:** `sandbox/` on the `sandbox-A` branch, until the sandbox is merged. A separate worktree keeps your
+`dev` checkout untouched.
+
+**Setup (once):** Python 3.11+ (tested on 3.14).
 
 ```bash
-python scripts/local_api.py --offline   # sample day (smoke by 14:00, PE indoors); drop --offline for live data
+git fetch origin && git worktree add ../bad-air-sandbox sandbox-A
+cd ../bad-air-sandbox/sandbox
+python -m venv .venv && .venv/bin/pip install jsonschema referencing boto3 moto
+```
+
+On Windows, use `.venv\Scripts\python` in place of `.venv/bin/python`.
+
+**The one command:**
+
+```bash
+.venv/bin/python scripts/local_api.py --offline
+```
+
+It prints `local API on http://localhost:8787` and comes pre-loaded with the school `sample-dwarka`.
+
+| Flag | Effect |
+|---|---|
+| `--offline` | Sample data only: the scripted day where smoke arrives by 14:00 and PE moves indoors. Use it for UI work and the video |
+| *(no flag)* | Live Open-Meteo and NASA FIRMS data. Each source falls back to the sample if it fails. The first `GET /today` for a school takes about 15 s |
+| `--port 8788` | A different port, if 8787 is taken |
+
+**Behaviour to know:**
+- **`POST /protocol` returns `202`, and the plan is stored about 0.03 s later** (measured on a cold start). Any client that
+  waits, like a person or the web app's 2-second poll, sees it on the next `GET /today`. A script that fires the GET within
+  milliseconds can miss it, so poll until `plan.generated_at >= requested_at`, as the deployed API also requires.
+- **The plan comes from the rules engine** (`generator.engine: "rules-fallback"`, `fallback_reason: "no AWS credentials
+  (local moto run)"`). With AWS credentials in the environment, the same command calls Bedrock for real, and only Bedrock
+  leaves your machine.
+- **`POST /alert/test` "sends" to the simulated SNS.** No real email goes out, but the alert is recorded and appears under
+  `alerts` in `GET /today`.
+- **`PUT` works for any new school id,** and that school's `GET /today` builds its data on demand.
+- **State is in memory.** Restarting the server starts fresh.
+- **Dependencies:** `strands-agents` isn't needed locally. It's only imported when Bedrock is actually called.
+
+**Pointing the web app at it:** set `NEXT_PUBLIC_API_URL=http://localhost:8787`, and open the app at
+**`http://localhost:3000`**. With `127.0.0.1:3000`, the Next.js 16 dev server blocks its own scripts unless
+`allowedDevOrigins` is set. CORS is open, so any origin can call the API.
+
+```bash
+cd ../bad-air-sandbox/sandbox/web && npm install && NEXT_PUBLIC_API_URL=http://localhost:8787 npm run dev
 ```
 
 ## Open questions
