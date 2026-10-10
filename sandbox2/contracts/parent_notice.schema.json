@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "parent_notice.schema.json",
+  "title": "ParentNoticeResponse",
+  "description": "Parent-facing notification about current air quality and school protocol.",
+  "type": "object",
+  "required": ["school_id", "date", "notices"],
+  "properties": {
+    "school_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notices": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Notice" }
+    }
+  },
+  "definitions": {
+    "NoticeSeverity": {
+      "type": "string",
+      "enum": ["info", "warning", "critical"],
+      "description": "Severity level of the notice."
+    },
+    "Notice": {
+      "type": "object",
+      "required": ["id", "severity", "title", "body", "issued_at"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "severity": { "$ref": "#/definitions/NoticeSeverity" },
+        "title": {
+          "type": "string",
+          "description": "Notice headline."
+        },
+        "body": {
+          "type": "string",
+          "description": "Full notice text, may include Markdown."
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

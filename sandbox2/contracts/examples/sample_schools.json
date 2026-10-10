@@ -1,0 +1,28 @@
+{
+  "schools": [
+    {
+      "id": "sch_anand_vihar_01",
+      "name": "Delhi Public School, Anand Vihar",
+      "address": "Anand Vihar, East Delhi, Delhi 110092",
+      "latitude": 28.6468,
+      "longitude": 77.3152,
+      "district": "East Delhi"
+    },
+    {
+      "id": "sch_dwarka_02",
+      "name": "Kendriya Vidyalaya, Dwarka",
+      "address": "Sector 8, Dwarka, New Delhi 110077",
+      "latitude": 28.5823,
+      "longitude": 77.0500,
+      "district": "South West Delhi"
+    },
+    {
+      "id": "sch_rohini_03",
+      "name": "DAV Public School, Rohini",
+      "address": "Sector 14, Rohini, Delhi 110085",
+      "latitude": 28.7358,
+      "longitude": 77.1143,
+      "district": "North West Delhi"
+    }
+  ]
+}

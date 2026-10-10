@@ -1,0 +1,124 @@
+{
+  "_note": "Team rule for outdoor activity, NOT an official standard. Bands are on hourly PM2.5 in ug/m3 (inclusive upper bounds). Green ceiling = India 24-h NAAQS (60).",
+  "metric": "pm25_ugm3",
+  "bands": [
+    {
+      "band": "green",
+      "max": 60,
+      "name_en": "Green",
+      "name_hi": "हरा",
+      "label_en": "Outdoor OK",
+      "label_hi": "बाहर गतिविधि ठीक"
+    },
+    {
+      "band": "amber",
+      "max": 120,
+      "name_en": "Amber",
+      "name_hi": "नारंगी",
+      "label_en": "Short, light outdoor only",
+      "label_hi": "बाहर केवल थोड़ी और हल्की गतिविधि"
+    },
+    {
+      "band": "red",
+      "max": null,
+      "name_en": "Red",
+      "name_hi": "लाल",
+      "label_en": "Keep activity indoors",
+      "label_hi": "गतिविधि अंदर ही रखें"
+    }
+  ],
+  "cpcb_pm25_aqi": {
+    "_note": "CPCB National AQI breakpoints for PM2.5 (24-h average, ug/m3) -> sub-index. Used to show an AQI-style number; ours is computed from model data, not an official CPCB reading.",
+    "breakpoints": [
+      {
+        "c_lo": 0,
+        "c_hi": 30,
+        "i_lo": 0,
+        "i_hi": 50,
+        "category": "Good"
+      },
+      {
+        "c_lo": 30,
+        "c_hi": 60,
+        "i_lo": 50,
+        "i_hi": 100,
+        "category": "Satisfactory"
+      },
+      {
+        "c_lo": 60,
+        "c_hi": 90,
+        "i_lo": 100,
+        "i_hi": 200,
+        "category": "Moderate"
+      },
+      {
+        "c_lo": 90,
+        "c_hi": 120,
+        "i_lo": 200,
+        "i_hi": 300,
+        "category": "Poor"
+      },
+      {
+        "c_lo": 120,
+        "c_hi": 250,
+        "i_lo": 300,
+        "i_hi": 400,
+        "category": "Very Poor"
+      },
+      {
+        "c_lo": 250,
+        "c_hi": 500,
+        "i_lo": 400,
+        "i_hi": 500,
+        "category": "Severe"
+      }
+    ]
+  },
+  "us_epa_pm25_aqi": {
+    "_note": "US-EPA AQI breakpoints for PM2.5 (Feb 2024 revision), ug/m3 truncated to 0.1 -> AQI. Contracts use EPA categories. EPA defines the AQI on a 24 h average; we apply it to each hourly model value, so it is indicative.",
+    "breakpoints": [
+      {
+        "c_lo": 0.0,
+        "c_hi": 9.0,
+        "i_lo": 0,
+        "i_hi": 50,
+        "category": "good"
+      },
+      {
+        "c_lo": 9.1,
+        "c_hi": 35.4,
+        "i_lo": 51,
+        "i_hi": 100,
+        "category": "moderate"
+      },
+      {
+        "c_lo": 35.5,
+        "c_hi": 55.4,
+        "i_lo": 101,
+        "i_hi": 150,
+        "category": "unhealthy_sensitive"
+      },
+      {
+        "c_lo": 55.5,
+        "c_hi": 125.4,
+        "i_lo": 151,
+        "i_hi": 200,
+        "category": "unhealthy"
+      },
+      {
+        "c_lo": 125.5,
+        "c_hi": 225.4,
+        "i_lo": 201,
+        "i_hi": 300,
+        "category": "very_unhealthy"
+      },
+      {
+        "c_lo": 225.5,
+        "c_hi": 325.4,
+        "i_lo": 301,
+        "i_hi": 500,
+        "category": "hazardous"
+      }
+    ]
+  }
+}
