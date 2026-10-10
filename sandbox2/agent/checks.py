@@ -30,6 +30,19 @@ def contract_errors(doc, name):
     return [f"/{'/'.join(map(str, e.absolute_path))}: {e.message}" for e in v.iter_errors(doc)]
 
 
+def school_errors(school):
+    """Stdlib check of a contract School, so the API rejects bad input even without jsonschema."""
+    errs = [f"{k} is required" for k in ("id", "name", "latitude", "longitude") if k not in school]
+    for k in ("id", "name", "address", "district"):
+        if k in school and not (isinstance(school[k], str) and school[k].strip()):
+            errs.append(f"{k} must be a non-empty string")
+    for k, lim in (("latitude", 90), ("longitude", 180)):
+        v = school.get(k)
+        if k in school and (isinstance(v, bool) or not isinstance(v, (int, float)) or not -lim <= v <= lim):
+            errs.append(f"{k} must be a number between -{lim} and {lim}")
+    return errs or contract_errors({"schools": [school]}, "school")
+
+
 def resolve_pointer(doc, ref):
     cur = doc
     for raw in ref.lstrip("/").split("/"):
