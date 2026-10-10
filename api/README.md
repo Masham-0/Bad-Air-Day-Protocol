@@ -71,6 +71,8 @@ curl -s "$API/schools"
 - **404:** unknown school. **500:** unexpected error.
 - **Produced by:** `data/ingest/airquality.py`, via `fetch_forecast(school)`. The data is the CAMS model via Open-Meteo, a
   forecast and not a sensor. If Open-Meteo fails, it falls back to the sample day (`current.source` starts with `"SAMPLE:"`).
+  The model is coarse (about 40 km), so nearby schools can show identical values. On 10 Oct, Anand Vihar and Rohini both
+  read 58.7 µg/m³ while Dwarka read 105.2.
 
 ```bash
 curl -s "$API/schools/sch_dwarka_02/air-quality"
@@ -106,16 +108,45 @@ curl -s "$API/schools/sch_dwarka_02/notices"
 
 ## Running it locally
 
-- **UI work:** keep `NEXT_PUBLIC_USE_MOCK` unset or `true`. The web app then runs entirely from the contract examples.
-- **No local server serves these four routes yet.** The frozen sandbox's `scripts/local_api.py` (on `sandbox-A`) serves the
-  earlier four-route design (`/today`, …) on `:8787`, so it doesn't match. A stdlib mock server for these routes is the
-  natural redo of block 2.
-- **The data you can produce today** (from the repo root, standard library only):
+`api/mock_server.py` serves all four routes on `http://localhost:8000`, Yash's default base URL. It uses the standard
+library only (Python 3.11+), with open CORS and the error envelope above. **The one command**, from the repo root:
+
+```bash
+python api/mock_server.py            # sample data
+```
+
+| Flag | Effect |
+|---|---|
+| *(none)* | Sample data: the scripted day from `mocks/`, shifted onto today (`current.source` starts with `"SAMPLE:"`) |
+| `--live` | Air quality from live Open-Meteo for each school, cached for an hour. It falls back to the sample if Open-Meteo fails |
+| `--port 8001` | Another port |
+| `--host 0.0.0.0` | Reachable from other devices on your network (e.g. a phone, for the video) |
+
+Where each route's data comes from:
+
+| Route | Data |
+|---|---|
+| `GET /schools` | `contracts/examples/sample_schools.json` (3 schools) |
+| `GET /schools/{id}/air-quality` | The data layer (`data/ingest/airquality.py`). Every school gets the same sample day unless `--live` is set |
+| `GET /schools/{id}/protocol` | `contracts/examples/sample_protocol.json`, with that school's id and today's date. A null `alternative` is dropped (open question 10) |
+| `GET /schools/{id}/notices` | `contracts/examples/sample_notices.json`, with that school's id and today's date |
+
+There's no POST route, because the client doesn't make one. State is read-only, so restarting changes nothing.
+
+**Pointing the web app at it:**
+
+```bash
+cd web && npm install && NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 NEXT_PUBLIC_USE_MOCK=false npm run dev
+```
+
+Then open http://localhost:3000. For UI work without any server, leave `NEXT_PUBLIC_USE_MOCK` unset: the client then serves
+the contract examples itself.
+
+**Data you can produce without the server** (from the repo root):
 
 ```bash
 python -m data.ingest.airquality        # AirQualityResponse for mocks/school.json (live, or SAMPLE fallback)
 python -m data.smoketrace.sources       # live wind grid + NASA FIRMS fire count
-BADAIR_OFFLINE=1 python -m data.ingest.airquality   # force the sample day
 ```
 
 ## Open questions
@@ -136,3 +167,6 @@ BADAIR_OFFLINE=1 python -m data.ingest.airquality   # force the sample day
 8. **Error `code` values** (`bad_request`, `not_found`, `internal`) are proposed here. They aren't in any contract yet.
 9. **Example AQI values** in `contracts/examples/sample_readings.json` match the pre-2024 EPA breakpoints. The backend uses
    the current ones: 65.3 µg/m³ gives 158, not 156.
+10. **`alternative: null` in the protocol example:** `contracts/examples/sample_protocol.json` has `"alternative": null`,
+    but `protocol.schema.json` only allows a string. The TypeScript type (`string | null`) allows null. Either the schema
+    should allow `null`, or the example should drop the key (Yash). Until then, the mock server drops it.
