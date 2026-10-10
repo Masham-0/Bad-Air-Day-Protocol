@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "forecast.schema.json",
+  "title": "Forecast (air at the school)",
+  "type": "object",
+  "required": [
+    "school_id",
+    "lat",
+    "lon",
+    "generated_at",
+    "source",
+    "now",
+    "hours"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "school_id": {
+      "type": "string"
+    },
+    "lat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "lon": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "description": "UTC, always ends in Z"
+    },
+    "source": {
+      "enum": [
+        "open-meteo-cams",
+        "sample"
+      ],
+      "description": "open-meteo-cams = CAMS model via Open-Meteo (a forecast, not a sensor)"
+    },
+    "now": {
+      "type": "object",
+      "required": [
+        "time",
+        "pm25",
+        "pm25_24h_mean",
+        "aqi",
+        "aqi_basis",
+        "band"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "time": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+          "description": "UTC, always ends in Z"
+        },
+        "pm25": {
+          "type": "number",
+          "minimum": 0
+        },
+        "pm25_24h_mean": {
+          "type": "number",
+          "minimum": 0
+        },
+        "aqi": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 500
+        },
+        "aqi_basis": {
+          "type": "string",
+          "description": "How aqi was computed; it is never an official CPCB reading"
+        },
+        "band": {
+          "enum": [
+            "green",
+            "amber",
+            "red"
+          ]
+        },
+        "station": {
+          "type": "object",
+          "description": "Optional nearest WAQI station. Values are US-EPA AQI sub-indices, NOT ug/m3.",
+          "required": [
+            "name",
+            "aqi_us",
+            "time",
+            "source"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "aqi_us": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "pm25_subindex_us": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "time": {
+              "type": "string"
+            },
+            "source": {
+              "const": "waqi"
+            }
+          }
+        }
+      }
+    },
+    "hours": {
+      "type": "array",
+      "minItems": 24,
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "required": [
+          "time",
+          "pm25",
+          "band"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "time": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+            "description": "UTC, always ends in Z"
+          },
+          "pm25": {
+            "type": "number",
+            "minimum": 0
+          },
+          "band": {
+            "enum": [
+              "green",
+              "amber",
+              "red"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

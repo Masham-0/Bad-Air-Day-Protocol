@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trace.schema.json",
+  "title": "SmokeTrace (indicative)",
+  "type": "object",
+  "required": [
+    "school_id",
+    "kind",
+    "target_time",
+    "generated_at",
+    "source",
+    "inputs",
+    "indicative",
+    "method",
+    "params",
+    "origin",
+    "path",
+    "upwind_from_deg",
+    "matched_fires",
+    "by_district",
+    "fire_count",
+    "frp_total_mw",
+    "smoke_likely",
+    "headline"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "school_id": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "now",
+        "forecast"
+      ],
+      "description": "now = arriving at target_time now; forecast = arriving at a later slot (14:00 IST PE)"
+    },
+    "target_time": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "description": "UTC, always ends in Z"
+    },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "description": "UTC, always ends in Z"
+    },
+    "source": {
+      "enum": [
+        "live",
+        "sample"
+      ],
+      "description": "sample if ANY input came from mocks"
+    },
+    "inputs": {
+      "type": "object",
+      "required": [
+        "wind",
+        "fires"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "wind": {
+          "enum": [
+            "open-meteo",
+            "sample"
+          ]
+        },
+        "fires": {
+          "enum": [
+            "firms-area-api",
+            "firms-public-csv",
+            "sample"
+          ]
+        }
+      }
+    },
+    "indicative": {
+      "const": true
+    },
+    "method": {
+      "type": "string"
+    },
+    "params": {
+      "type": "object",
+      "required": [
+        "hours_back",
+        "step_minutes",
+        "corridor_km",
+        "frp_threshold_mw",
+        "min_fires",
+        "wind_level"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "hours_back": {
+          "type": "number"
+        },
+        "step_minutes": {
+          "type": "number"
+        },
+        "corridor_km": {
+          "type": "number"
+        },
+        "frp_threshold_mw": {
+          "type": "number",
+          "description": "Total FRP of matched fires needed for smoke_likely"
+        },
+        "min_fires": {
+          "type": "integer"
+        },
+        "wind_level": {
+          "type": "string"
+        }
+      }
+    },
+    "origin": {
+      "type": "object",
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "lon": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        }
+      }
+    },
+    "path": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "time",
+          "lat",
+          "lon",
+          "wind_speed_ms",
+          "wind_from_deg"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "time": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+            "description": "UTC, always ends in Z"
+          },
+          "lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "lon": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "wind_speed_ms": {
+            "type": "number",
+            "minimum": 0
+          },
+          "wind_from_deg": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 360
+          }
+        }
+      }
+    },
+    "upwind_from_deg": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 360,
+      "description": "Bearing from the school to the parcel 6 h back"
+    },
+    "matched_fires": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "lat",
+          "lon",
+          "frp_mw",
+          "acq_time",
+          "distance_km",
+          "hours_before_arrival",
+          "district",
+          "state"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "lon": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "frp_mw": {
+            "type": "number",
+            "minimum": 0
+          },
+          "acq_time": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+            "description": "UTC, always ends in Z"
+          },
+          "satellite": {
+            "type": "string"
+          },
+          "distance_km": {
+            "type": "number",
+            "minimum": 0
+          },
+          "hours_before_arrival": {
+            "type": "number"
+          },
+          "district": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "by_district": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "district",
+          "district_hi",
+          "state",
+          "state_hi",
+          "fire_count",
+          "frp_total_mw"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "district": {
+            "type": "string"
+          },
+          "district_hi": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "state_hi": {
+            "type": "string"
+          },
+          "fire_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "frp_total_mw": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "fire_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "frp_total_mw": {
+      "type": "number",
+      "minimum": 0
+    },
+    "smoke_likely": {
+      "type": "boolean"
+    },
+    "headline": {
+      "type": "object",
+      "required": [
+        "en",
+        "hi"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hi": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
