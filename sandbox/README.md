@@ -1,5 +1,9 @@
 # Backend sandbox (Aani)
 
+> **FROZEN on 10 Oct 2026: reference only, don't edit.** Aani's data layer now lives on `dev`
+> (`data/`, `mocks/`, `tests/test_trace.py`, `scripts/probe_apis.py`); make changes there. The agent, infra and
+> web prototypes below stay here as a reference for their owners.
+
 A self-contained, runnable test bed for the whole Bad-Air Day Protocol loop. It isn't wired into the
 team skeleton at the repo root yet. Its layout follows `sandbox/CLAUDE.md`, not the root folders.
 
