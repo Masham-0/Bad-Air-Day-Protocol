@@ -1,0 +1,722 @@
+{
+ "_note": "APPROXIMATE district HQ coordinates (+/- a few km), used only to name the nearest district for a fire. Not boundaries.",
+ "max_assign_km": 60,
+ "states_hi": {
+  "Punjab": "पंजाब",
+  "Haryana": "हरियाणा",
+  "Uttar Pradesh": "उत्तर प्रदेश",
+  "Delhi": "दिल्ली",
+  "Rajasthan": "राजस्थान",
+  "Uttarakhand": "उत्तराखंड",
+  "Himachal Pradesh": "हिमाचल प्रदेश"
+ },
+ "districts": [
+  {
+   "district": "Amritsar",
+   "district_hi": "अमृतसर",
+   "state": "Punjab",
+   "lat": 31.63,
+   "lon": 74.87
+  },
+  {
+   "district": "Tarn Taran",
+   "district_hi": "तरन तारन",
+   "state": "Punjab",
+   "lat": 31.45,
+   "lon": 74.93
+  },
+  {
+   "district": "Gurdaspur",
+   "district_hi": "गुरदासपुर",
+   "state": "Punjab",
+   "lat": 32.04,
+   "lon": 75.4
+  },
+  {
+   "district": "Pathankot",
+   "district_hi": "पठानकोट",
+   "state": "Punjab",
+   "lat": 32.27,
+   "lon": 75.65
+  },
+  {
+   "district": "Kapurthala",
+   "district_hi": "कपूरथला",
+   "state": "Punjab",
+   "lat": 31.38,
+   "lon": 75.38
+  },
+  {
+   "district": "Jalandhar",
+   "district_hi": "जालंधर",
+   "state": "Punjab",
+   "lat": 31.33,
+   "lon": 75.58
+  },
+  {
+   "district": "Hoshiarpur",
+   "district_hi": "होशियारपुर",
+   "state": "Punjab",
+   "lat": 31.53,
+   "lon": 75.91
+  },
+  {
+   "district": "Shaheed Bhagat Singh Nagar",
+   "district_hi": "नवांशहर",
+   "state": "Punjab",
+   "lat": 31.12,
+   "lon": 76.12
+  },
+  {
+   "district": "Rupnagar",
+   "district_hi": "रूपनगर",
+   "state": "Punjab",
+   "lat": 30.97,
+   "lon": 76.53
+  },
+  {
+   "district": "Mohali",
+   "district_hi": "मोहाली",
+   "state": "Punjab",
+   "lat": 30.7,
+   "lon": 76.72
+  },
+  {
+   "district": "Fatehgarh Sahib",
+   "district_hi": "फ़तेहगढ़ साहिब",
+   "state": "Punjab",
+   "lat": 30.65,
+   "lon": 76.39
+  },
+  {
+   "district": "Ludhiana",
+   "district_hi": "लुधियाना",
+   "state": "Punjab",
+   "lat": 30.9,
+   "lon": 75.85
+  },
+  {
+   "district": "Firozpur",
+   "district_hi": "फ़िरोज़पुर",
+   "state": "Punjab",
+   "lat": 30.92,
+   "lon": 74.61
+  },
+  {
+   "district": "Moga",
+   "district_hi": "मोगा",
+   "state": "Punjab",
+   "lat": 30.82,
+   "lon": 75.17
+  },
+  {
+   "district": "Faridkot",
+   "district_hi": "फ़रीदकोट",
+   "state": "Punjab",
+   "lat": 30.67,
+   "lon": 74.76
+  },
+  {
+   "district": "Fazilka",
+   "district_hi": "फ़ाज़िल्का",
+   "state": "Punjab",
+   "lat": 30.4,
+   "lon": 74.03
+  },
+  {
+   "district": "Sri Muktsar Sahib",
+   "district_hi": "मुक्तसर",
+   "state": "Punjab",
+   "lat": 30.47,
+   "lon": 74.52
+  },
+  {
+   "district": "Bathinda",
+   "district_hi": "बठिंडा",
+   "state": "Punjab",
+   "lat": 30.21,
+   "lon": 74.95
+  },
+  {
+   "district": "Mansa",
+   "district_hi": "मानसा",
+   "state": "Punjab",
+   "lat": 29.99,
+   "lon": 75.4
+  },
+  {
+   "district": "Barnala",
+   "district_hi": "बरनाला",
+   "state": "Punjab",
+   "lat": 30.38,
+   "lon": 75.55
+  },
+  {
+   "district": "Sangrur",
+   "district_hi": "संगरूर",
+   "state": "Punjab",
+   "lat": 30.25,
+   "lon": 75.84
+  },
+  {
+   "district": "Malerkotla",
+   "district_hi": "मलेरकोटला",
+   "state": "Punjab",
+   "lat": 30.53,
+   "lon": 75.88
+  },
+  {
+   "district": "Patiala",
+   "district_hi": "पटियाला",
+   "state": "Punjab",
+   "lat": 30.34,
+   "lon": 76.39
+  },
+  {
+   "district": "Panchkula",
+   "district_hi": "पंचकूला",
+   "state": "Haryana",
+   "lat": 30.69,
+   "lon": 76.86
+  },
+  {
+   "district": "Ambala",
+   "district_hi": "अंबाला",
+   "state": "Haryana",
+   "lat": 30.38,
+   "lon": 76.78
+  },
+  {
+   "district": "Yamunanagar",
+   "district_hi": "यमुनानगर",
+   "state": "Haryana",
+   "lat": 30.13,
+   "lon": 77.29
+  },
+  {
+   "district": "Kurukshetra",
+   "district_hi": "कुरुक्षेत्र",
+   "state": "Haryana",
+   "lat": 29.97,
+   "lon": 76.85
+  },
+  {
+   "district": "Kaithal",
+   "district_hi": "कैथल",
+   "state": "Haryana",
+   "lat": 29.8,
+   "lon": 76.4
+  },
+  {
+   "district": "Karnal",
+   "district_hi": "करनाल",
+   "state": "Haryana",
+   "lat": 29.69,
+   "lon": 76.99
+  },
+  {
+   "district": "Panipat",
+   "district_hi": "पानीपत",
+   "state": "Haryana",
+   "lat": 29.39,
+   "lon": 76.97
+  },
+  {
+   "district": "Sonipat",
+   "district_hi": "सोनीपत",
+   "state": "Haryana",
+   "lat": 28.99,
+   "lon": 77.02
+  },
+  {
+   "district": "Jind",
+   "district_hi": "जींद",
+   "state": "Haryana",
+   "lat": 29.32,
+   "lon": 76.31
+  },
+  {
+   "district": "Fatehabad",
+   "district_hi": "फ़तेहाबाद",
+   "state": "Haryana",
+   "lat": 29.52,
+   "lon": 75.45
+  },
+  {
+   "district": "Sirsa",
+   "district_hi": "सिरसा",
+   "state": "Haryana",
+   "lat": 29.53,
+   "lon": 75.03
+  },
+  {
+   "district": "Hisar",
+   "district_hi": "हिसार",
+   "state": "Haryana",
+   "lat": 29.15,
+   "lon": 75.72
+  },
+  {
+   "district": "Rohtak",
+   "district_hi": "रोहतक",
+   "state": "Haryana",
+   "lat": 28.89,
+   "lon": 76.61
+  },
+  {
+   "district": "Bhiwani",
+   "district_hi": "भिवानी",
+   "state": "Haryana",
+   "lat": 28.79,
+   "lon": 76.13
+  },
+  {
+   "district": "Charkhi Dadri",
+   "district_hi": "चरखी दादरी",
+   "state": "Haryana",
+   "lat": 28.59,
+   "lon": 76.27
+  },
+  {
+   "district": "Jhajjar",
+   "district_hi": "झज्जर",
+   "state": "Haryana",
+   "lat": 28.61,
+   "lon": 76.66
+  },
+  {
+   "district": "Gurugram",
+   "district_hi": "गुरुग्राम",
+   "state": "Haryana",
+   "lat": 28.46,
+   "lon": 77.03
+  },
+  {
+   "district": "Faridabad",
+   "district_hi": "फ़रीदाबाद",
+   "state": "Haryana",
+   "lat": 28.41,
+   "lon": 77.32
+  },
+  {
+   "district": "Palwal",
+   "district_hi": "पलवल",
+   "state": "Haryana",
+   "lat": 28.14,
+   "lon": 77.33
+  },
+  {
+   "district": "Nuh",
+   "district_hi": "नूंह",
+   "state": "Haryana",
+   "lat": 28.1,
+   "lon": 77.0
+  },
+  {
+   "district": "Rewari",
+   "district_hi": "रेवाड़ी",
+   "state": "Haryana",
+   "lat": 28.2,
+   "lon": 76.62
+  },
+  {
+   "district": "Mahendragarh",
+   "district_hi": "महेंद्रगढ़",
+   "state": "Haryana",
+   "lat": 28.28,
+   "lon": 76.15
+  },
+  {
+   "district": "Saharanpur",
+   "district_hi": "सहारनपुर",
+   "state": "Uttar Pradesh",
+   "lat": 29.97,
+   "lon": 77.55
+  },
+  {
+   "district": "Shamli",
+   "district_hi": "शामली",
+   "state": "Uttar Pradesh",
+   "lat": 29.45,
+   "lon": 77.31
+  },
+  {
+   "district": "Muzaffarnagar",
+   "district_hi": "मुज़फ़्फ़रनगर",
+   "state": "Uttar Pradesh",
+   "lat": 29.47,
+   "lon": 77.7
+  },
+  {
+   "district": "Baghpat",
+   "district_hi": "बागपत",
+   "state": "Uttar Pradesh",
+   "lat": 28.94,
+   "lon": 77.22
+  },
+  {
+   "district": "Meerut",
+   "district_hi": "मेरठ",
+   "state": "Uttar Pradesh",
+   "lat": 28.98,
+   "lon": 77.71
+  },
+  {
+   "district": "Ghaziabad",
+   "district_hi": "गाज़ियाबाद",
+   "state": "Uttar Pradesh",
+   "lat": 28.67,
+   "lon": 77.45
+  },
+  {
+   "district": "Hapur",
+   "district_hi": "हापुड़",
+   "state": "Uttar Pradesh",
+   "lat": 28.73,
+   "lon": 77.78
+  },
+  {
+   "district": "Gautam Buddh Nagar",
+   "district_hi": "गौतम बुद्ध नगर",
+   "state": "Uttar Pradesh",
+   "lat": 28.47,
+   "lon": 77.51
+  },
+  {
+   "district": "Bulandshahr",
+   "district_hi": "बुलंदशहर",
+   "state": "Uttar Pradesh",
+   "lat": 28.4,
+   "lon": 77.85
+  },
+  {
+   "district": "Sri Ganganagar",
+   "district_hi": "श्रीगंगानगर",
+   "state": "Rajasthan",
+   "lat": 29.91,
+   "lon": 73.88
+  },
+  {
+   "district": "Hanumangarh",
+   "district_hi": "हनुमानगढ़",
+   "state": "Rajasthan",
+   "lat": 29.58,
+   "lon": 74.33
+  },
+  {
+   "district": "New Delhi",
+   "district_hi": "नई दिल्ली",
+   "state": "Delhi",
+   "lat": 28.61,
+   "lon": 77.21
+  },
+  {
+   "district": "Central Delhi",
+   "district_hi": "मध्य दिल्ली",
+   "state": "Delhi",
+   "lat": 28.65,
+   "lon": 77.23
+  },
+  {
+   "district": "North Delhi",
+   "district_hi": "उत्तरी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.8,
+   "lon": 77.13
+  },
+  {
+   "district": "North West Delhi",
+   "district_hi": "उत्तर-पश्चिमी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.72,
+   "lon": 77.07
+  },
+  {
+   "district": "West Delhi",
+   "district_hi": "पश्चिमी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.65,
+   "lon": 77.12
+  },
+  {
+   "district": "South West Delhi",
+   "district_hi": "दक्षिण-पश्चिमी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.58,
+   "lon": 77.05
+  },
+  {
+   "district": "South Delhi",
+   "district_hi": "दक्षिणी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.52,
+   "lon": 77.21
+  },
+  {
+   "district": "South East Delhi",
+   "district_hi": "दक्षिण-पूर्वी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.56,
+   "lon": 77.26
+  },
+  {
+   "district": "East Delhi",
+   "district_hi": "पूर्वी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.63,
+   "lon": 77.3
+  },
+  {
+   "district": "North East Delhi",
+   "district_hi": "उत्तर-पूर्वी दिल्ली",
+   "state": "Delhi",
+   "lat": 28.69,
+   "lon": 77.28
+  },
+  {
+   "district": "Shahdara",
+   "district_hi": "शाहदरा",
+   "state": "Delhi",
+   "lat": 28.67,
+   "lon": 77.29
+  },
+  {
+   "district": "Aligarh",
+   "district_hi": "अलीगढ़",
+   "state": "Uttar Pradesh",
+   "lat": 27.88,
+   "lon": 78.08
+  },
+  {
+   "district": "Mathura",
+   "district_hi": "मथुरा",
+   "state": "Uttar Pradesh",
+   "lat": 27.49,
+   "lon": 77.67
+  },
+  {
+   "district": "Agra",
+   "district_hi": "आगरा",
+   "state": "Uttar Pradesh",
+   "lat": 27.18,
+   "lon": 78.01
+  },
+  {
+   "district": "Firozabad",
+   "district_hi": "फ़िरोज़ाबाद",
+   "state": "Uttar Pradesh",
+   "lat": 27.15,
+   "lon": 78.4
+  },
+  {
+   "district": "Etah",
+   "district_hi": "एटा",
+   "state": "Uttar Pradesh",
+   "lat": 27.56,
+   "lon": 78.66
+  },
+  {
+   "district": "Kasganj",
+   "district_hi": "कासगंज",
+   "state": "Uttar Pradesh",
+   "lat": 27.81,
+   "lon": 78.65
+  },
+  {
+   "district": "Mainpuri",
+   "district_hi": "मैनपुरी",
+   "state": "Uttar Pradesh",
+   "lat": 27.23,
+   "lon": 79.02
+  },
+  {
+   "district": "Etawah",
+   "district_hi": "इटावा",
+   "state": "Uttar Pradesh",
+   "lat": 26.78,
+   "lon": 79.02
+  },
+  {
+   "district": "Budaun",
+   "district_hi": "बदायूँ",
+   "state": "Uttar Pradesh",
+   "lat": 28.03,
+   "lon": 79.12
+  },
+  {
+   "district": "Bareilly",
+   "district_hi": "बरेली",
+   "state": "Uttar Pradesh",
+   "lat": 28.37,
+   "lon": 79.43
+  },
+  {
+   "district": "Farrukhabad",
+   "district_hi": "फ़र्रुख़ाबाद",
+   "state": "Uttar Pradesh",
+   "lat": 27.39,
+   "lon": 79.58
+  },
+  {
+   "district": "Kannauj",
+   "district_hi": "कन्नौज",
+   "state": "Uttar Pradesh",
+   "lat": 27.05,
+   "lon": 79.92
+  },
+  {
+   "district": "Shahjahanpur",
+   "district_hi": "शाहजहाँपुर",
+   "state": "Uttar Pradesh",
+   "lat": 27.88,
+   "lon": 79.91
+  },
+  {
+   "district": "Hardoi",
+   "district_hi": "हरदोई",
+   "state": "Uttar Pradesh",
+   "lat": 27.4,
+   "lon": 80.13
+  },
+  {
+   "district": "Moradabad",
+   "district_hi": "मुरादाबाद",
+   "state": "Uttar Pradesh",
+   "lat": 28.84,
+   "lon": 78.77
+  },
+  {
+   "district": "Rampur",
+   "district_hi": "रामपुर",
+   "state": "Uttar Pradesh",
+   "lat": 28.8,
+   "lon": 79.03
+  },
+  {
+   "district": "Amroha",
+   "district_hi": "अमरोहा",
+   "state": "Uttar Pradesh",
+   "lat": 28.9,
+   "lon": 78.47
+  },
+  {
+   "district": "Sambhal",
+   "district_hi": "संभल",
+   "state": "Uttar Pradesh",
+   "lat": 28.58,
+   "lon": 78.57
+  },
+  {
+   "district": "Bijnor",
+   "district_hi": "बिजनौर",
+   "state": "Uttar Pradesh",
+   "lat": 29.37,
+   "lon": 78.13
+  },
+  {
+   "district": "Pilibhit",
+   "district_hi": "पीलीभीत",
+   "state": "Uttar Pradesh",
+   "lat": 28.63,
+   "lon": 79.8
+  },
+  {
+   "district": "Lakhimpur Kheri",
+   "district_hi": "लखीमपुर खीरी",
+   "state": "Uttar Pradesh",
+   "lat": 27.95,
+   "lon": 80.78
+  },
+  {
+   "district": "Sitapur",
+   "district_hi": "सीतापुर",
+   "state": "Uttar Pradesh",
+   "lat": 27.57,
+   "lon": 80.68
+  },
+  {
+   "district": "Lucknow",
+   "district_hi": "लखनऊ",
+   "state": "Uttar Pradesh",
+   "lat": 26.85,
+   "lon": 80.95
+  },
+  {
+   "district": "Kanpur Nagar",
+   "district_hi": "कानपुर",
+   "state": "Uttar Pradesh",
+   "lat": 26.45,
+   "lon": 80.33
+  },
+  {
+   "district": "Dehradun",
+   "district_hi": "देहरादून",
+   "state": "Uttarakhand",
+   "lat": 30.32,
+   "lon": 78.03
+  },
+  {
+   "district": "Haridwar",
+   "district_hi": "हरिद्वार",
+   "state": "Uttarakhand",
+   "lat": 29.95,
+   "lon": 78.16
+  },
+  {
+   "district": "Udham Singh Nagar",
+   "district_hi": "ऊधम सिंह नगर",
+   "state": "Uttarakhand",
+   "lat": 28.98,
+   "lon": 79.4
+  },
+  {
+   "district": "Alwar",
+   "district_hi": "अलवर",
+   "state": "Rajasthan",
+   "lat": 27.55,
+   "lon": 76.6
+  },
+  {
+   "district": "Bharatpur",
+   "district_hi": "भरतपुर",
+   "state": "Rajasthan",
+   "lat": 27.22,
+   "lon": 77.49
+  },
+  {
+   "district": "Jhunjhunu",
+   "district_hi": "झुंझुनू",
+   "state": "Rajasthan",
+   "lat": 28.13,
+   "lon": 75.4
+  },
+  {
+   "district": "Churu",
+   "district_hi": "चूरू",
+   "state": "Rajasthan",
+   "lat": 28.3,
+   "lon": 74.95
+  },
+  {
+   "district": "Sikar",
+   "district_hi": "सीकर",
+   "state": "Rajasthan",
+   "lat": 27.61,
+   "lon": 75.14
+  },
+  {
+   "district": "Bikaner",
+   "district_hi": "बीकानेर",
+   "state": "Rajasthan",
+   "lat": 28.02,
+   "lon": 73.31
+  },
+  {
+   "district": "Una",
+   "district_hi": "ऊना",
+   "state": "Himachal Pradesh",
+   "lat": 31.47,
+   "lon": 76.27
+  }
+ ]
+}

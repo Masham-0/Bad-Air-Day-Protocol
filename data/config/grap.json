@@ -1,0 +1,10 @@
+{
+  "_note": "Delhi-NCR Graded Response Action Plan stages by CAQM, keyed on Delhi's average AQI. For context only: we never declare a stage, official CAQM orders always win.",
+  "source": "CAQM GRAP (revised schedule)",
+  "stages": [
+    {"stage": 1, "name": "Poor", "aqi_min": 201, "aqi_max": 300},
+    {"stage": 2, "name": "Very Poor", "aqi_min": 301, "aqi_max": 400},
+    {"stage": 3, "name": "Severe", "aqi_min": 401, "aqi_max": 450},
+    {"stage": 4, "name": "Severe+", "aqi_min": 451, "aqi_max": null}
+  ]
+}
