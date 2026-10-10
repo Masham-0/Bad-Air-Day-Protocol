@@ -1,0 +1,734 @@
+{
+ "source": "sample",
+ "fires": [
+  {
+   "lat": 29.807,
+   "lon": 76.5131,
+   "frp_mw": 12.35,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7616,
+   "lon": 76.3504,
+   "frp_mw": 13.67,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3573,
+   "lon": 75.7406,
+   "frp_mw": 5.96,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2702,
+   "lon": 75.8407,
+   "frp_mw": 9.31,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2727,
+   "lon": 75.8687,
+   "frp_mw": 4.95,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.353,
+   "lon": 75.9446,
+   "frp_mw": 6.5,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1936,
+   "lon": 75.944,
+   "frp_mw": 5.16,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3661,
+   "lon": 75.9137,
+   "frp_mw": 6.62,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.4357,
+   "lon": 76.3204,
+   "frp_mw": 4.54,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "h",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.283,
+   "lon": 76.3787,
+   "frp_mw": 5.27,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.6298,
+   "lon": 77.0736,
+   "frp_mw": 4.83,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "l",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.6462,
+   "lon": 77.0513,
+   "frp_mw": 4.4,
+   "acq_time": "2026-10-10T08:15:00Z",
+   "confidence": "h",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.8217,
+   "lon": 76.2876,
+   "frp_mw": 3.51,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7277,
+   "lon": 76.436,
+   "frp_mw": 6.42,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.71,
+   "lon": 76.5014,
+   "frp_mw": 3.28,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.8772,
+   "lon": 76.4732,
+   "frp_mw": 5.43,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.8588,
+   "lon": 76.4094,
+   "frp_mw": 9.44,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "h",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.899,
+   "lon": 76.4889,
+   "frp_mw": 3.41,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2883,
+   "lon": 75.9472,
+   "frp_mw": 2.92,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "h",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1464,
+   "lon": 75.7363,
+   "frp_mw": 11.3,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.3596,
+   "lon": 76.281,
+   "frp_mw": 8.24,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.3315,
+   "lon": 76.1901,
+   "frp_mw": 4.12,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "l",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.5817,
+   "lon": 74.8436,
+   "frp_mw": 7.02,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.0207,
+   "lon": 74.7254,
+   "frp_mw": 8.82,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "l",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.8165,
+   "lon": 74.7197,
+   "frp_mw": 1.2,
+   "acq_time": "2026-10-10T20:30:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7697,
+   "lon": 76.3188,
+   "frp_mw": 17.71,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3036,
+   "lon": 75.9318,
+   "frp_mw": 6.71,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "h",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2275,
+   "lon": 75.8355,
+   "frp_mw": 1.3,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2972,
+   "lon": 75.8953,
+   "frp_mw": 14.33,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3022,
+   "lon": 75.7689,
+   "frp_mw": 7.3,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.409,
+   "lon": 76.2959,
+   "frp_mw": 1.27,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.5936,
+   "lon": 75.3654,
+   "frp_mw": 9.92,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "h",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7568,
+   "lon": 76.9225,
+   "frp_mw": 16.94,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.7371,
+   "lon": 74.7547,
+   "frp_mw": 15.23,
+   "acq_time": "2026-10-11T07:55:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.8335,
+   "lon": 76.286,
+   "frp_mw": 4.49,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.8621,
+   "lon": 76.3183,
+   "frp_mw": 5.42,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7023,
+   "lon": 76.3032,
+   "frp_mw": 14.92,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "h",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7261,
+   "lon": 76.2967,
+   "frp_mw": 12.57,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7712,
+   "lon": 76.3888,
+   "frp_mw": 9.12,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7441,
+   "lon": 76.5048,
+   "frp_mw": 8.93,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7388,
+   "lon": 76.3909,
+   "frp_mw": 7.75,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.8373,
+   "lon": 76.375,
+   "frp_mw": 13.31,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.7326,
+   "lon": 76.5194,
+   "frp_mw": 6.12,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.8306,
+   "lon": 76.4701,
+   "frp_mw": 5.55,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.903,
+   "lon": 76.4909,
+   "frp_mw": 9.9,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3529,
+   "lon": 75.9013,
+   "frp_mw": 11.95,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3459,
+   "lon": 75.8284,
+   "frp_mw": 4.58,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1852,
+   "lon": 75.7729,
+   "frp_mw": 1.83,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3363,
+   "lon": 75.737,
+   "frp_mw": 2.68,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1526,
+   "lon": 75.8782,
+   "frp_mw": 4.69,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2266,
+   "lon": 75.8014,
+   "frp_mw": 9.93,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1636,
+   "lon": 75.764,
+   "frp_mw": 4.45,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "h",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1535,
+   "lon": 75.8765,
+   "frp_mw": 6.31,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2012,
+   "lon": 75.9525,
+   "frp_mw": 7.23,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.179,
+   "lon": 75.8919,
+   "frp_mw": 3.88,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "h",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1549,
+   "lon": 75.9308,
+   "frp_mw": 8.13,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1522,
+   "lon": 75.8217,
+   "frp_mw": 13.05,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.326,
+   "lon": 76.4394,
+   "frp_mw": 6.49,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.4203,
+   "lon": 76.4098,
+   "frp_mw": 3.99,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.3999,
+   "lon": 76.4922,
+   "frp_mw": 4.38,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "h",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.263,
+   "lon": 76.4919,
+   "frp_mw": 9.92,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.4169,
+   "lon": 76.4791,
+   "frp_mw": 2.61,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.4274,
+   "lon": 76.5021,
+   "frp_mw": 3.21,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.4254,
+   "lon": 76.2177,
+   "frp_mw": 11.57,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.3035,
+   "lon": 76.4177,
+   "frp_mw": 19.09,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.2742,
+   "lon": 76.288,
+   "frp_mw": 5.25,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.4773,
+   "lon": 75.436,
+   "frp_mw": 8.76,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.5237,
+   "lon": 75.4819,
+   "frp_mw": 2.38,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.5382,
+   "lon": 75.5024,
+   "frp_mw": 4.96,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 29.677,
+   "lon": 76.9082,
+   "frp_mw": 11.9,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.6263,
+   "lon": 74.8074,
+   "frp_mw": 4.87,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.5867,
+   "lon": 74.8796,
+   "frp_mw": 3.73,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.6096,
+   "lon": 74.8294,
+   "frp_mw": 5.83,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "h",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.5627,
+   "lon": 74.8546,
+   "frp_mw": 2.91,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.8065,
+   "lon": 74.6443,
+   "frp_mw": 3.01,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.8786,
+   "lon": 74.5991,
+   "frp_mw": 1.51,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "h",
+   "satellite": "N20",
+   "daynight": "D"
+  },
+  {
+   "lat": 31.0004,
+   "lon": 74.6029,
+   "frp_mw": 7.93,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1203,
+   "lon": 74.9907,
+   "frp_mw": 6.58,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2354,
+   "lon": 75.0613,
+   "frp_mw": 16.63,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "n",
+   "satellite": "N",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.2289,
+   "lon": 75.0529,
+   "frp_mw": 14.13,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "h",
+   "satellite": "N21",
+   "daynight": "D"
+  },
+  {
+   "lat": 30.1376,
+   "lon": 74.9721,
+   "frp_mw": 9.48,
+   "acq_time": "2026-10-11T20:25:00Z",
+   "confidence": "l",
+   "satellite": "N",
+   "daynight": "D"
+  }
+ ]
+}
