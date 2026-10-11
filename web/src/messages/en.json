@@ -129,5 +129,19 @@
     "reasonLabel": "Reason",
     "noActivities": "No activity decisions found matching the selected filter.",
     "unavailable": "Activity Windows Unavailable"
+  },
+  "history": {
+    "title": "Historical Trends & Protocol Archive",
+    "subtitle": "Past 7-day record of school air quality and automated activity protocols",
+    "avgAqi": "7-Day Avg AQI",
+    "peakAqi": "Peak AQI",
+    "cleanDays": "All Clear Days",
+    "restrictedDays": "Restricted Days",
+    "tableTitle": "Daily Safety Decision Log",
+    "date": "Date",
+    "aqiCategory": "AQI & Category",
+    "protocolStatus": "Protocol Status",
+    "primaryAction": "Primary Safety Action",
+    "pollutant": "Primary Pollutant"
   }
 }

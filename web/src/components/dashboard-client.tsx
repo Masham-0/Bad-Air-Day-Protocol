@@ -168,6 +168,7 @@ export function DashboardClient({
       <section>
         <ActivityWindows
           activities={protocol?.activities}
+          protocol={protocol}
           isLoading={isLoading}
         />
       </section>
@@ -177,6 +178,7 @@ export function DashboardClient({
         <ParentNotice
           notices={notices}
           schoolName={selectedSchool?.name}
+          date={protocol?.date}
           isLoading={isLoading}
         />
       </section>

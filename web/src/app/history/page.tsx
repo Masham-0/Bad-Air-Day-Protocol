@@ -1,13 +1,21 @@
 import React from "react";
 import { Header } from "@/components/header";
+import { HistoryClient } from "@/components/history-client";
+import { getSchools } from "@/lib/api-client";
 
-export default function HistoryPage() {
+export const metadata = {
+  title: "Historical Trends & Archive — Bad Air Day Protocol",
+  description:
+    "7-day historical school air quality trends and protocol safety decision archive.",
+};
+
+export default async function HistoryPage() {
+  const schoolsData = await getSchools();
+
   return (
-    <main className="min-h-dvh p-6 md:p-10 max-w-4xl mx-auto space-y-6">
+    <main className="min-h-dvh p-4 sm:p-6 md:p-10 max-w-5xl mx-auto space-y-6">
       <Header />
-      <div className="glass rounded-2xl p-6">
-        <h2 className="text-xl font-bold text-slate-100">History</h2>
-      </div>
+      <HistoryClient initialSchools={schoolsData.schools} />
     </main>
   );
 }
