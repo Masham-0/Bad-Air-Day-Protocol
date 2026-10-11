@@ -79,6 +79,8 @@
     "validFor": "Valid for",
     "sources": "Sources",
     "fallbackNotice": "Notice: Generated using standard fallback protocol",
+    "fallbackDescription": "Live agent pipeline unavailable or offline. Default conservative safety policies are active.",
+    "activePolicies": "{count} activity policies active",
     "empty": "No protocol activities scheduled for today."
   },
   "notice": {

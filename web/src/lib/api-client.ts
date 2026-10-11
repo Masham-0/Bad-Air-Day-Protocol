@@ -137,6 +137,14 @@ const MOCK_PROTOCOL: ProtocolResponse = {
     },
   ],
   generated_at: "2026-10-10T06:00:00+05:30",
+  valid_for: "2026-10-10",
+  validFor: "2026-10-10",
+  sources: [
+    "CPCB Delhi - Anand Vihar Station",
+    "IMD Air Quality Forecast",
+    "Automated Health Safety Agent",
+  ],
+  is_fallback: false,
 };
 
 const MOCK_NOTICES: ParentNoticeResponse = {
@@ -221,7 +229,14 @@ export async function getProtocol(
 ): Promise<ProtocolResponse> {
   if (USE_MOCK) {
     await mockDelay();
-    return structuredClone(MOCK_PROTOCOL);
+    const proto = structuredClone(MOCK_PROTOCOL);
+    proto.school_id = schoolId;
+    if (schoolId === "sch_rohini_03") {
+      proto.is_fallback = true;
+      proto.overall_message =
+        "Standard fallback safety protocol active. Real-time air quality feeds offline for this station; default conservative restrictions enforced.";
+    }
+    return proto;
   }
   return apiFetch<ProtocolResponse>(
     `/schools/${encodeURIComponent(schoolId)}/protocol`,
