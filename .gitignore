@@ -39,6 +39,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 .venv/
+.sam-cli-venv/
+.aws-sam/
 venv/
 env/
 .pytest_cache/

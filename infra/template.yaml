@@ -1,0 +1,323 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  Bad-Air Day Protocol baseline: five DynamoDB tables, an HTTP API, four
+  Lambda functions, and one SNS topic.
+
+Parameters:
+  BedrockModelId:
+    Type: String
+    Description: Foundation model ID the agent Lambda may invoke.
+    AllowedPattern: "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$"
+
+Globals:
+  Function:
+    Runtime: python3.12
+    CodeUri: lambda/
+    Tags:
+      Project: bad-air-day-protocol
+
+Resources:
+  SchoolsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-schools"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: school_id
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: school_id
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      SSESpecification:
+        SSEEnabled: true
+
+  ReadingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-readings"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: school_id
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: school_id
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      SSESpecification:
+        SSEEnabled: true
+
+  TracesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-traces"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: school_id
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: school_id
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      SSESpecification:
+        SSEEnabled: true
+
+  PlansTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-plans"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: school_id
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: school_id
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      SSESpecification:
+        SSEEnabled: true
+
+  AlertsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-alerts"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: school_id
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: school_id
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      SSESpecification:
+        SSEEnabled: true
+
+  AlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "${AWS::StackName}-alerts"
+      DisplayName: Bad-Air Day Protocol alerts
+
+  BadAirDayHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: "$default"
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowHeaders:
+          - content-type
+          - authorization
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - OPTIONS
+        MaxAge: 300
+
+  IngestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-ingest"
+      Handler: handlers.ingest_handler
+      Description: Ingest air-quality and smoke-trace data for schools.
+      Timeout: 30
+      MemorySize: 512
+      Environment:
+        Variables:
+          READINGS_TABLE: !Ref ReadingsTable
+          TRACES_TABLE: !Ref TracesTable
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Sid: WriteReadingsAndTraces
+              Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource:
+                - !GetAtt ReadingsTable.Arn
+                - !GetAtt TracesTable.Arn
+
+  AgentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-agent"
+      Handler: handlers.agent_handler
+      Description: Generate and persist the daily school protocol with Bedrock.
+      Timeout: 180
+      MemorySize: 1024
+      Environment:
+        Variables:
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          SCHOOLS_TABLE: !Ref SchoolsTable
+          READINGS_TABLE: !Ref ReadingsTable
+          TRACES_TABLE: !Ref TracesTable
+          PLANS_TABLE: !Ref PlansTable
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Sid: ReadProtocolInputsAndWritePlan
+              Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource:
+                - !GetAtt SchoolsTable.Arn
+                - !GetAtt ReadingsTable.Arn
+                - !GetAtt TracesTable.Arn
+                - !GetAtt PlansTable.Arn
+            - Sid: InvokeConfiguredBedrockModel
+              Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+                - bedrock:InvokeModelWithResponseStream
+              Resource: !Sub "arn:${AWS::Partition}:bedrock:${AWS::Region}::foundation-model/${BedrockModelId}"
+
+  AlertFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-alert"
+      Handler: handlers.alert_handler
+      Description: Send a prepared school protocol through Amazon SNS.
+      Timeout: 25
+      MemorySize: 256
+      Environment:
+        Variables:
+          PLANS_TABLE: !Ref PlansTable
+          ALERTS_TABLE: !Ref AlertsTable
+          ALERTS_TOPIC_ARN: !Ref AlertsTopic
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Sid: ReadPlansAndRecordAlerts
+              Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:PutItem
+              Resource:
+                - !GetAtt PlansTable.Arn
+                - !GetAtt AlertsTable.Arn
+            - Sid: PublishSchoolAlert
+              Effect: Allow
+              Action: sns:Publish
+              Resource: !Ref AlertsTopic
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-api"
+      Handler: handlers.api_handler
+      Description: Serve school APIs and dispatch protocol or alert work.
+      Timeout: 29
+      MemorySize: 512
+      Environment:
+        Variables:
+          SCHOOLS_TABLE: !Ref SchoolsTable
+          READINGS_TABLE: !Ref ReadingsTable
+          TRACES_TABLE: !Ref TracesTable
+          PLANS_TABLE: !Ref PlansTable
+          ALERTS_TABLE: !Ref AlertsTable
+          AGENT_FUNCTION_NAME: !Ref AgentFunction
+          ALERT_FUNCTION_NAME: !Ref AlertFunction
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Sid: ReadAndWriteSchoolData
+              Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+              Resource:
+                - !GetAtt SchoolsTable.Arn
+                - !GetAtt ReadingsTable.Arn
+                - !GetAtt TracesTable.Arn
+                - !GetAtt PlansTable.Arn
+                - !GetAtt AlertsTable.Arn
+            - Sid: DispatchAgentAndAlertFunctions
+              Effect: Allow
+              Action: lambda:InvokeFunction
+              Resource:
+                - !GetAtt AgentFunction.Arn
+                - !GetAtt AlertFunction.Arn
+      Events:
+        GetToday:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BadAirDayHttpApi
+            Path: /schools/{school_id}/today
+            Method: GET
+        GenerateProtocol:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BadAirDayHttpApi
+            Path: /schools/{school_id}/protocol
+            Method: POST
+        TestAlert:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BadAirDayHttpApi
+            Path: /schools/{school_id}/alert/test
+            Method: POST
+        PutSchool:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref BadAirDayHttpApi
+            Path: /schools/{school_id}
+            Method: PUT
+
+Outputs:
+  ApiBaseUrl:
+    Description: Base URL for the Bad-Air Day Protocol HTTP API.
+    Value: !Sub "https://${BadAirDayHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}"
+  SchoolsTableName:
+    Description: DynamoDB table for school configuration.
+    Value: !Ref SchoolsTable
+  ReadingsTableName:
+    Description: DynamoDB table for normalized current readings and forecasts.
+    Value: !Ref ReadingsTable
+  TracesTableName:
+    Description: DynamoDB table for smoke-trace context.
+    Value: !Ref TracesTable
+  PlansTableName:
+    Description: DynamoDB table for generated protocols.
+    Value: !Ref PlansTable
+  AlertsTableName:
+    Description: DynamoDB table for alert delivery records.
+    Value: !Ref AlertsTable
+  AlertsTopicArn:
+    Description: SNS topic ARN for school alerts.
+    Value: !Ref AlertsTopic
+  IngestFunctionName:
+    Description: Lambda function name for data ingestion.
+    Value: !Ref IngestFunction
+  AgentFunctionName:
+    Description: Lambda function name for protocol generation.
+    Value: !Ref AgentFunction
+  AlertFunctionName:
+    Description: Lambda function name for alert delivery.
+    Value: !Ref AlertFunction
+  ApiFunctionName:
+    Description: Lambda function name for HTTP API requests.
+    Value: !Ref ApiFunction
