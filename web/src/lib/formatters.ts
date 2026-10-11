@@ -3,7 +3,12 @@
  * All functions produce explicit units so the UI never shows ambiguous numbers.
  */
 
-import type { AqiCategory, ProtocolStatus, NoticeSeverity } from "@/types/api";
+import type {
+  AqiCategory,
+  ProtocolStatus,
+  NoticeSeverity,
+  ActivityDecisionType,
+} from "@/types/api";
 
 // ─── Date / Time ────────────────────────────────────────────────────────────────
 
@@ -255,4 +260,84 @@ export function noticeSeverityLabel(severity: NoticeSeverity, lang: "en" | "hi" 
     critical: "Critical",
   };
   return labels[severity];
+}
+
+// ─── Activity Decisions ─────────────────────────────────────────────────────────
+
+/**
+ * Map an activity decision type to a human-readable label.
+ */
+export function activityDecisionLabel(
+  decision: ActivityDecisionType,
+  lang: "en" | "hi" = "en"
+): string {
+  if (lang === "hi") {
+    const hiLabels: Record<ActivityDecisionType, string> = {
+      outdoors: "बाहरी गतिविधियाँ अनुमत",
+      indoors: "अंदर स्थानांतरित",
+      restricted: "पूरी तरह प्रतिबंधित",
+    };
+    return hiLabels[decision] ?? decision;
+  }
+  const labels: Record<ActivityDecisionType, string> = {
+    outdoors: "Outdoors Approved",
+    indoors: "Moved Indoors",
+    restricted: "Fully Restricted",
+  };
+  return labels[decision];
+}
+
+/**
+ * Visual styling token definitions for activity decision types.
+ */
+export function activityDecisionStyle(decision: ActivityDecisionType) {
+  const styles: Record<
+    ActivityDecisionType,
+    {
+      bg: string;
+      text: string;
+      border: string;
+      glow: string;
+      badgeBg: string;
+      badgeText: string;
+      badgeBorder: string;
+      icon: string;
+      shortLabel: string;
+    }
+  > = {
+    outdoors: {
+      bg: "rgba(34, 197, 94, 0.08)",
+      text: "#4ade80",
+      border: "rgba(34, 197, 94, 0.35)",
+      glow: "0 0 20px -4px rgba(34, 197, 94, 0.25)",
+      badgeBg: "rgba(34, 197, 94, 0.15)",
+      badgeText: "#4ade80",
+      badgeBorder: "rgba(34, 197, 94, 0.4)",
+      icon: "✓",
+      shortLabel: "Outdoors",
+    },
+    indoors: {
+      bg: "rgba(234, 179, 8, 0.08)",
+      text: "#facc15",
+      border: "rgba(234, 179, 8, 0.35)",
+      glow: "0 0 20px -4px rgba(234, 179, 8, 0.25)",
+      badgeBg: "rgba(234, 179, 8, 0.15)",
+      badgeText: "#facc15",
+      badgeBorder: "rgba(234, 179, 8, 0.4)",
+      icon: "⌂",
+      shortLabel: "Indoors",
+    },
+    restricted: {
+      bg: "rgba(239, 68, 68, 0.08)",
+      text: "#f87171",
+      border: "rgba(239, 68, 68, 0.35)",
+      glow: "0 0 20px -4px rgba(239, 68, 68, 0.25)",
+      badgeBg: "rgba(239, 68, 68, 0.15)",
+      badgeText: "#f87171",
+      badgeBorder: "rgba(239, 68, 68, 0.4)",
+      icon: "✕",
+      shortLabel: "Restricted",
+    },
+  };
+  return styles[decision] ?? styles.indoors;
 }

@@ -108,5 +108,21 @@
     "close": "बंद करें",
     "refresh": "ताज़ा करें",
     "na": "अनुपलब्ध"
+  },
+  "activityWindows": {
+    "title": "गतिविधि अनुसूची निर्णय",
+    "subtitle": "वास्तविक समय वायु गुणवत्ता पूर्वानुमान के आधार पर प्रोटोकॉल सिफारिशें",
+    "activitiesEvaluated": "{count} गतिविधियाँ मूल्यांकित",
+    "filterAll": "सभी",
+    "filterOutdoors": "बाहर",
+    "filterIndoors": "अंदर",
+    "filterRestricted": "प्रतिबंधित",
+    "outdoorsApproved": "बाहरी गतिविधियाँ अनुमत",
+    "movedIndoors": "अंदर स्थानांतरित",
+    "fullyRestricted": "पूरी तरह प्रतिबंधित",
+    "alternativeLabel": "वैकल्पिक सुझाव",
+    "reasonLabel": "कारण",
+    "noActivities": "चयनित श्रेणी में कोई गतिविधि निर्णय नहीं है।",
+    "unavailable": "गतिविधि विंडो अनुपलब्ध"
   }
 }

@@ -108,5 +108,21 @@
     "close": "Close",
     "refresh": "Refresh",
     "na": "N/A"
+  },
+  "activityWindows": {
+    "title": "Activity Schedule Decisions",
+    "subtitle": "Protocol recommendations based on real-time air quality forecasts",
+    "activitiesEvaluated": "{count} Activities Evaluated",
+    "filterAll": "All",
+    "filterOutdoors": "Outdoors",
+    "filterIndoors": "Indoors",
+    "filterRestricted": "Restricted",
+    "outdoorsApproved": "Outdoors Approved",
+    "movedIndoors": "Moved Indoors",
+    "fullyRestricted": "Fully Restricted",
+    "alternativeLabel": "Suggested Alternative",
+    "reasonLabel": "Reason",
+    "noActivities": "No activity decisions found matching the selected filter.",
+    "unavailable": "Activity Windows Unavailable"
   }
 }
