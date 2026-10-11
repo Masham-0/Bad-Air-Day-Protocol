@@ -48,6 +48,10 @@ export function Header() {
             );
           })}
         </nav>
+        <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-900/60 border border-white/5 px-2.5 py-1 rounded-lg shrink-0">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>System Active</span>
+        </div>
         <LanguageToggle />
       </div>
     </header>
