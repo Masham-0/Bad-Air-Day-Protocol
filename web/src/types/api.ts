@@ -122,6 +122,10 @@ export interface Notice {
   body: string;
   issued_at: string;
   expires_at?: string;
+  /** Hindi translation of notice headline */
+  title_hi?: string;
+  /** Hindi translation of full notice text */
+  body_hi?: string;
 }
 
 export interface ParentNoticeResponse {

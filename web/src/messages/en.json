@@ -96,7 +96,10 @@
     "print": "Print Notice",
     "share": "Share",
     "copied": "Link copied to clipboard!",
-    "empty": "No active notices for this school today."
+    "empty": "No active notices for this school today.",
+    "bilingual": "Bilingual (EN + HI)",
+    "openPortal": "Open Parent Portal",
+    "officialAdvisory": "Official Air Quality & Activity Advisory"
   },
   "forecast": {
     "title": "24-Hour Forecast",
