@@ -50,3 +50,7 @@ coverage/
 # TypeScript build info
 *.tsbuildinfo
 next-env.d.ts
+
+# SAM build output (infra/build.sh)
+.build/
+.aws-sam/

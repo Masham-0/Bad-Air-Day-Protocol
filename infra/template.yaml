@@ -1,0 +1,182 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Bad-Air Day Protocol backend (Team Shawarma): HTTP API, 6 Lambdas, 3 DynamoDB tables, SNS email topic,
+  EventBridge 06:00 IST schedule, Strands agent on Amazon Bedrock. Build first: bash infra/build.sh
+
+Parameters:
+  BedrockModelId:
+    Type: String
+    Default: us.amazon.nova-pro-v1:0
+    Description: Bedrock model ID or inference profile for the Strands agent (must be enabled in the region)
+  AlertEmail:
+    Type: String
+    Default: ""
+    Description: Optional email subscribed to the alert topic (click the SNS confirmation email after deploy)
+  SampleData:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+    Description: true serves the labelled sample day (smoke by 14:00) instead of live Open-Meteo + FIRMS
+
+Conditions:
+  HasAlertEmail: !Not [!Equals [!Ref AlertEmail, ""]]
+  UseSampleData: !Equals [!Ref SampleData, "true"]
+
+Globals:
+  Function:
+    Runtime: python3.12
+    CodeUri: ../.build/backend
+    MemorySize: 1024
+    Timeout: 29
+    Architectures: [x86_64]
+    Environment:
+      Variables:
+        SCHOOLS_TABLE: !Ref SchoolsTable
+        PLANS_TABLE: !Ref PlansTable
+        ALERTS_TABLE: !Ref AlertsTable
+        ALERT_TOPIC_ARN: !Ref AlertTopic
+        BEDROCK_MODEL_ID: !Ref BedrockModelId
+        BADAIR_OFFLINE: !If [UseSampleData, "1", "0"]
+
+Resources:
+  # Every item is {school_id (PK), sk (SK), doc}; doc is the contract JSON as a string.
+  SchoolsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [{AttributeName: school_id, AttributeType: S}, {AttributeName: sk, AttributeType: S}]
+      KeySchema: [{AttributeName: school_id, KeyType: HASH}, {AttributeName: sk, KeyType: RANGE}]
+  PlansTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [{AttributeName: school_id, AttributeType: S}, {AttributeName: sk, AttributeType: S}]
+      KeySchema: [{AttributeName: school_id, KeyType: HASH}, {AttributeName: sk, KeyType: RANGE}]
+  AlertsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [{AttributeName: school_id, AttributeType: S}, {AttributeName: sk, AttributeType: S}]
+      KeySchema: [{AttributeName: school_id, KeyType: HASH}, {AttributeName: sk, KeyType: RANGE}]
+
+  AlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Bad-Air Day Protocol
+  AlertEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasAlertEmail
+    Properties:
+      TopicArn: !Ref AlertTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins: ["*"]
+        AllowMethods: [GET, POST, PUT, OPTIONS]
+        AllowHeaders: [content-type]
+
+  SchoolFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api.handlers.get_school.handler
+      Policies:
+        - DynamoDBCrudPolicy: {TableName: !Ref SchoolsTable}
+      Events:
+        List: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: /schools}}
+        Get: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}"}}
+        Put: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: PUT, Path: "/schools/{id}"}}
+
+  ForecastFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api.handlers.get_forecast.handler
+      Policies:
+        - DynamoDBReadPolicy: {TableName: !Ref SchoolsTable}
+      Events:
+        AirQuality: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}/air-quality"}}
+        Smoke: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}/smoke"}}
+
+  ProtocolFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api.handlers.get_protocol.handler
+      Environment:
+        Variables:
+          AGENT_ENGINE: rules        # answers inside 29 s; the Bedrock plan comes from POST /protocol or 06:00
+      Policies:
+        - DynamoDBReadPolicy: {TableName: !Ref SchoolsTable}
+        - DynamoDBCrudPolicy: {TableName: !Ref PlansTable}
+      Events:
+        Protocol: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}/protocol"}}
+        Notices: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}/notices"}}
+        Basis: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}/basis"}}
+
+  DashboardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api.handlers.get_dashboard.handler
+      Environment:
+        Variables:
+          AGENT_ENGINE: rules
+      Policies:
+        - DynamoDBReadPolicy: {TableName: !Ref SchoolsTable}
+        - DynamoDBCrudPolicy: {TableName: !Ref PlansTable}
+      Events:
+        Dashboard: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}/dashboard"}}
+
+  GenerateProtocolFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-generate-protocol"
+      Handler: api.handlers.generate_protocol.handler
+      Timeout: 180
+      Environment:
+        Variables:
+          SELF_FUNCTION_NAME: !Sub "${AWS::StackName}-generate-protocol"
+      Policies:
+        - DynamoDBReadPolicy: {TableName: !Ref SchoolsTable}
+        - DynamoDBCrudPolicy: {TableName: !Ref PlansTable}
+        - Statement:
+            - Effect: Allow
+              Action: [bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream]
+              Resource: "*"
+            - Effect: Allow
+              Action: lambda:InvokeFunction
+              Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-generate-protocol"
+      Events:
+        Regenerate: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: POST, Path: "/schools/{id}/protocol"}}
+
+  AlertsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: data.alerts.handler.handler
+      Timeout: 300
+      Policies:
+        - DynamoDBReadPolicy: {TableName: !Ref SchoolsTable}
+        - DynamoDBCrudPolicy: {TableName: !Ref PlansTable}
+        - DynamoDBCrudPolicy: {TableName: !Ref AlertsTable}
+        - SNSPublishMessagePolicy: {TopicName: !GetAtt AlertTopic.TopicName}
+        - Statement:
+            - Effect: Allow
+              Action: [bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream]
+              Resource: "*"
+      Events:
+        Daily0600IST:
+          Type: Schedule
+          Properties:
+            Schedule: cron(30 0 * * ? *)
+            Description: 06:00 IST daily protocol and parent email
+        Send: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: POST, Path: "/schools/{id}/alerts"}}
+        History: {Type: HttpApi, Properties: {ApiId: !Ref HttpApi, Method: GET, Path: "/schools/{id}/alerts"}}
+
+Outputs:
+  ApiUrl:
+    Description: NEXT_PUBLIC_API_BASE_URL for the web app (no trailing slash)
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+  AlertTopicArn:
+    Value: !Ref AlertTopic
