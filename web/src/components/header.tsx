@@ -16,20 +16,30 @@ export function Header() {
   ];
 
   return (
-    <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/5">
-      <div className="flex flex-col gap-1">
-        <Link href="/" className="group inline-block">
-          <h1 className="gradient-text text-3xl font-extrabold tracking-tight transition-opacity group-hover:opacity-90">
-            {t("app.title")}
-          </h1>
-        </Link>
-        <p className="text-slate-400 text-sm">
-          {t("app.description")}
-        </p>
-      </div>
+    <header className="flex items-center justify-between gap-4 w-full pb-5 pt-1 border-b border-slate-200/60" aria-label="Application Header">
+      {/* Brand Emblem & App Title */}
+      <Link href="/" className="flex items-center gap-3 group">
+        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-[0_6px_14px_rgba(37,99,235,0.25),inset_0_2px_4px_rgba(255,255,255,0.35)] transition-transform group-hover:scale-105 shrink-0">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
+          </svg>
+        </div>
+        <div>
+          <span className="text-base sm:text-lg font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors block leading-tight">
+            Bad Air Day Protocol
+          </span>
+          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest block mt-0.5">
+            School Safety Network
+          </span>
+        </div>
+      </Link>
 
-      <div className="flex items-center gap-3 self-start sm:self-auto flex-wrap">
-        <nav className="flex items-center gap-1.5" aria-label="Main Navigation">
+      {/* Navigation & Language Switcher */}
+      <div className="flex items-center gap-2.5">
+        <nav
+          className="flex items-center gap-1 p-1 bg-white border border-slate-200/80 rounded-2xl shadow-[0_4px_12px_rgba(15,23,42,0.04),inset_0_1px_2px_rgba(255,255,255,0.95)]"
+          aria-label="Main Navigation"
+        >
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -37,10 +47,10 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors ${
+                className={`text-xs font-bold px-4 py-2 rounded-xl transition-all ${
                   isActive
-                    ? "bg-slate-800 text-white shadow-sm border border-slate-700/80"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
                 {item.label}
@@ -48,10 +58,6 @@ export function Header() {
             );
           })}
         </nav>
-        <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-900/60 border border-white/5 px-2.5 py-1 rounded-lg shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>System Active</span>
-        </div>
         <LanguageToggle />
       </div>
     </header>

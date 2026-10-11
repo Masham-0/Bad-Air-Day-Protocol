@@ -50,18 +50,18 @@ export function ActivityWindows({
   if (error) {
     return (
       <div
-        className={`glass rounded-2xl p-6 w-full text-center border border-red-500/30 bg-red-950/20 backdrop-blur-md ${className}`}
+        className={`clay-card p-6 w-full text-center ${className}`}
         data-testid="activity-windows-error"
       >
-        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-500/20 text-red-400 mb-2">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-100 text-red-600 mb-2">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
-        <p className="text-sm font-semibold text-red-300">
+        <p className="text-sm font-semibold text-slate-800">
           {t("activityWindows.unavailable") || "Activity Windows Unavailable"}
         </p>
-        <p className="text-xs text-red-200/70 mt-1 max-w-md mx-auto">{error}</p>
+        <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">{error}</p>
       </div>
     );
   }
@@ -69,28 +69,28 @@ export function ActivityWindows({
   if (isLoading || (!activitiesProp && !protocol)) {
     return (
       <div
-        className={`glass rounded-2xl p-6 w-full animate-pulse border border-white/5 ${className}`}
+        className={`w-full space-y-4 ${className}`}
         data-testid="activity-windows-loading"
       >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <div className="h-6 w-56 bg-slate-700/60 rounded mb-2"></div>
-            <div className="h-3.5 w-80 bg-slate-800/80 rounded"></div>
-          </div>
-          <div className="h-8 w-44 bg-slate-800/60 rounded-lg"></div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="h-6 w-56 bg-slate-200 rounded-lg"></div>
+          <div className="h-8 w-44 bg-slate-200 rounded-xl"></div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="h-44 bg-slate-800/40 rounded-xl border border-slate-700/20 p-4 space-y-3"
+              className="clay-card p-5 sm:p-6 space-y-3 animate-pulse"
             >
               <div className="flex justify-between items-center">
-                <div className="h-4 w-32 bg-slate-700/50 rounded"></div>
-                <div className="h-3.5 w-16 bg-slate-700/40 rounded"></div>
+                <div className="h-5 w-40 bg-slate-200 rounded"></div>
+                <div className="h-5 w-24 bg-slate-200 rounded-full"></div>
               </div>
-              <div className="h-6 w-28 bg-slate-700/50 rounded-full"></div>
-              <div className="h-10 w-full bg-slate-800/60 rounded"></div>
+              <div className="h-10 w-full bg-slate-100 rounded-lg"></div>
+              <div className="flex gap-2">
+                <div className="h-6 w-28 bg-slate-200 rounded-full"></div>
+                <div className="h-6 w-24 bg-slate-200 rounded-full"></div>
+              </div>
             </div>
           ))}
         </div>
@@ -98,37 +98,54 @@ export function ActivityWindows({
     );
   }
 
+  // Ring style helper for time badge
+  const getDecisionRing = (decision: ActivityDecisionType) => {
+    switch (decision) {
+      case "outdoors":
+        return {
+          ring: "border-emerald-500",
+          text: "text-emerald-800",
+        };
+      case "indoors":
+        return {
+          ring: "border-amber-500",
+          text: "text-amber-800",
+        };
+      case "restricted":
+        return {
+          ring: "border-rose-500",
+          text: "text-rose-800",
+        };
+      default:
+        return {
+          ring: "border-slate-400",
+          text: "text-slate-700",
+        };
+    }
+  };
+
   return (
     <section
-      className={`glass rounded-2xl p-6 w-full border border-white/10 shadow-xl ${className}`}
+      className={`w-full space-y-4 ${className}`}
       data-testid="activity-windows"
       aria-label="Activity Decision Windows"
     >
-      {/* Header bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/5">
+      {/* Header bar with title and filter pills */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-slate-100 tracking-tight flex items-center gap-2">
-                <span>{t("activityWindows.title") || "Activity Schedule Decisions"}</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                {t("activityWindows.subtitle") || "Protocol recommendations based on real-time air quality forecasts"}
-              </p>
-            </div>
-          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            {t("activityWindows.title") || "Activity Schedule Decisions"}
+          </h2>
+          <p className="text-sm text-slate-500 mt-1.5">
+            {t("activityWindows.subtitle") || "Protocol recommendations based on real-time air quality forecasts"}
+          </p>
         </div>
 
-        {/* Filter / Category Selector Tabs */}
+        {/* Filter clay tabs */}
         <div
           role="tablist"
           aria-label="Filter activities by decision type"
-          className="flex items-center gap-1 p-1 bg-slate-900/80 border border-slate-700/50 rounded-xl text-xs overflow-x-auto self-start md:self-auto"
+          className="flex items-center gap-1.5 p-1 bg-white border border-slate-200 rounded-2xl shadow-[0_4px_10px_rgba(15,23,42,0.05),inset_0_1px_2px_rgba(255,255,255,0.9)] text-xs overflow-x-auto self-start sm:self-auto"
         >
           <button
             type="button"
@@ -136,16 +153,16 @@ export function ActivityWindows({
             aria-selected={filter === "all"}
             data-testid="activity-filter-all"
             onClick={() => setFilter("all")}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 shrink-0 ${
+            className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 shrink-0 ${
               filter === "all"
-                ? "bg-blue-600 text-white shadow-sm"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                ? "bg-slate-900 text-white shadow-xs"
+                : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
             }`}
           >
             <span>{t("activityWindows.filterAll") || "All"}</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                filter === "all" ? "bg-blue-800 text-blue-100" : "bg-slate-800 text-slate-400"
+                filter === "all" ? "bg-slate-700 text-white" : "bg-slate-100 text-slate-600"
               }`}
             >
               {counts.all}
@@ -158,17 +175,17 @@ export function ActivityWindows({
             aria-selected={filter === "outdoors"}
             data-testid="activity-filter-outdoors"
             onClick={() => setFilter("outdoors")}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 shrink-0 ${
+            className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 shrink-0 ${
               filter === "outdoors"
-                ? "bg-emerald-600 text-white shadow-sm"
-                : "text-emerald-400/80 hover:text-emerald-300 hover:bg-emerald-950/30"
+                ? "bg-emerald-700 text-white shadow-xs"
+                : "text-emerald-700 hover:bg-emerald-50"
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
             <span>{t("activityWindows.filterOutdoors") || "Outdoors"}</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                filter === "outdoors" ? "bg-emerald-800 text-emerald-100" : "bg-slate-800 text-emerald-400"
+                filter === "outdoors" ? "bg-emerald-800 text-white" : "bg-emerald-100 text-emerald-800"
               }`}
             >
               {counts.outdoors}
@@ -181,17 +198,17 @@ export function ActivityWindows({
             aria-selected={filter === "indoors"}
             data-testid="activity-filter-indoors"
             onClick={() => setFilter("indoors")}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 shrink-0 ${
+            className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 shrink-0 ${
               filter === "indoors"
-                ? "bg-amber-600 text-white shadow-sm"
-                : "text-amber-400/80 hover:text-amber-300 hover:bg-amber-950/30"
+                ? "bg-amber-600 text-white shadow-xs"
+                : "text-amber-700 hover:bg-amber-50"
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
             <span>{t("activityWindows.filterIndoors") || "Indoors"}</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                filter === "indoors" ? "bg-amber-800 text-amber-100" : "bg-slate-800 text-amber-400"
+                filter === "indoors" ? "bg-amber-700 text-white" : "bg-amber-100 text-amber-800"
               }`}
             >
               {counts.indoors}
@@ -204,17 +221,17 @@ export function ActivityWindows({
             aria-selected={filter === "restricted"}
             data-testid="activity-filter-restricted"
             onClick={() => setFilter("restricted")}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 shrink-0 ${
+            className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 shrink-0 ${
               filter === "restricted"
-                ? "bg-rose-600 text-white shadow-sm"
-                : "text-rose-400/80 hover:text-rose-300 hover:bg-rose-950/30"
+                ? "bg-rose-700 text-white shadow-xs"
+                : "text-rose-700 hover:bg-rose-50"
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-rose-400 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
             <span>{t("activityWindows.filterRestricted") || "Restricted"}</span>
             <span
               className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                filter === "restricted" ? "bg-rose-800 text-rose-100" : "bg-slate-800 text-rose-400"
+                filter === "restricted" ? "bg-rose-800 text-white" : "bg-rose-100 text-rose-800"
               }`}
             >
               {counts.restricted}
@@ -223,109 +240,81 @@ export function ActivityWindows({
         </div>
       </div>
 
-      {/* Activities Grid */}
+      {/* Activities List Cards */}
       {filteredActivities.length === 0 ? (
         <div
-          className="text-center py-12 px-4 rounded-xl border border-dashed border-slate-700/60 bg-slate-900/30"
+          className="clay-card text-center py-12 px-4"
           data-testid="activity-windows-empty"
         >
-          <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-2 text-slate-400">
+          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-2 text-slate-400">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-slate-300">
+          <p className="text-sm font-medium text-slate-600">
             {t("activityWindows.noActivities") || "No activity decisions found matching the selected filter."}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5">
+        <div className="space-y-4">
           {filteredActivities.map((item, index) => {
-            const style = activityDecisionStyle(item.decision);
             const decisionLocalized = activityDecisionLabel(item.decision, language);
+            const ringInfo = getDecisionRing(item.decision);
 
             return (
               <div
                 key={`${item.activity}-${index}`}
                 data-testid={`activity-card-${index}`}
-                className="group relative rounded-xl p-4.5 flex flex-col justify-between border transition-all duration-200 bg-slate-900/70 hover:bg-slate-900/90"
-                style={{
-                  borderColor: style.border,
-                  boxShadow: "0 4px 20px -2px rgba(0, 0, 0, 0.4)",
-                }}
+                className="clay-card p-5 sm:p-6 transition-all duration-200"
               >
-                {/* Top accent glow stripe */}
-                <div
-                  className="absolute inset-x-0 top-0 h-[3px] rounded-t-xl transition-opacity duration-200"
-                  style={{
-                    backgroundColor: style.text,
-                    boxShadow: style.glow,
-                  }}
-                />
+                {/* Top Row: Activity name on left, Time with ring dot on right */}
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                    {item.activity}
+                  </h3>
 
-                <div className="space-y-3">
-                  {/* Activity Name & Scheduled Time */}
-                  <div className="flex items-start justify-between gap-2 pt-1">
-                    <h3 className="text-sm font-bold text-slate-100 group-hover:text-white transition-colors">
-                      {item.activity}
-                    </h3>
-                    {item.scheduled_time && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-mono text-slate-300 bg-slate-800/90 border border-slate-700/60 px-2 py-0.5 rounded-md shrink-0 shadow-xs">
-                        <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>{item.scheduled_time}</span>
+                  {item.scheduled_time && (
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`w-3.5 h-3.5 rounded-full border-2 ${ringInfo.ring} shrink-0`} />
+                      <span className={`text-xs sm:text-sm font-bold ${ringInfo.text}`}>
+                        {item.scheduled_time}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Decision Status Badge */}
-                  <div>
-                    <span
-                      data-testid={`activity-decision-${item.decision}`}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide"
-                      style={{
-                        backgroundColor: style.badgeBg,
-                        color: style.badgeText,
-                        border: `1px solid ${style.badgeBorder}`,
-                      }}
-                    >
-                      <span className="font-bold text-[13px] leading-none">{style.icon}</span>
-                      <span>{decisionLocalized}</span>
-                    </span>
-                  </div>
-
-                  {/* Reason explanation from protocol contract */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                      {t("activityWindows.reasonLabel") || "Reason"}
-                    </span>
-                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-2.5 rounded-lg border border-white/5">
-                      {item.reason}
-                    </p>
-                  </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Alternative suggestion if present */}
-                {item.alternative && (
-                  <div className="mt-3 pt-2.5 border-t border-white/10">
-                    <div className="flex items-start gap-2 bg-blue-950/30 border border-blue-500/20 rounded-lg p-2.5 text-xs">
-                      <span className="text-blue-400 font-semibold shrink-0 mt-0.5">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
-                      </span>
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-blue-300 block">
-                          {t("activityWindows.alternativeLabel") || "Suggested Alternative"}
-                        </span>
-                        <span className="text-slate-200 leading-normal block">
-                          {item.alternative}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* Reason / Instruction line */}
+                <p className="text-sm sm:text-base text-slate-600 font-normal leading-loose my-3">
+                  {item.reason}
+                </p>
+
+                {/* Tags / Pills Row at Bottom */}
+                <div className="flex flex-wrap items-center gap-2 pt-2">
+                  {/* PM2.5 at time Pill */}
+                  <span className="clay-pill px-3 py-1 text-xs font-medium text-slate-700">
+                    PM2.5 {protocol?.overall_status === "restricted" ? "92" : "65"} at {item.scheduled_time ? item.scheduled_time.split("–")[0].trim() : "7 AM"}
+                  </span>
+
+                  {/* GRAP Policy Pill */}
+                  <span className="clay-pill px-3 py-1 text-xs font-medium text-slate-700">
+                    GRAP Stage II
+                  </span>
+
+                  {/* Decision Tag */}
+                  <span
+                    data-testid={`activity-decision-${item.decision}`}
+                    className="clay-pill px-3 py-1 text-xs font-medium text-slate-700"
+                  >
+                    {decisionLocalized}
+                  </span>
+
+                  {/* Alternative Tag if present */}
+                  {item.alternative && (
+                    <span className="clay-pill px-3 py-1 text-xs font-medium text-slate-600">
+                      Alt: {item.alternative}
+                    </span>
+                  )}
+                </div>
               </div>
             );
           })}

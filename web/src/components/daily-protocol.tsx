@@ -26,28 +26,28 @@ const STATUS_BADGES: Record<
   { bg: string; text: string; border: string; indicator: string }
 > = {
   all_clear: {
-    bg: "rgba(34, 197, 94, 0.15)",
-    text: "#4ade80",
-    border: "rgba(34, 197, 94, 0.35)",
+    bg: "#f0fdf4",
+    text: "#15803d",
+    border: "rgba(34, 197, 94, 0.25)",
     indicator: "#22c55e",
   },
   caution: {
-    bg: "rgba(234, 179, 8, 0.15)",
-    text: "#facc15",
-    border: "rgba(234, 179, 8, 0.35)",
+    bg: "#fefce8",
+    text: "#a16207",
+    border: "rgba(234, 179, 8, 0.25)",
     indicator: "#eab308",
   },
   restricted: {
-    bg: "rgba(239, 68, 68, 0.15)",
-    text: "#f87171",
-    border: "rgba(239, 68, 68, 0.35)",
-    indicator: "#ef4444",
+    bg: "#fff1f2",
+    text: "#9f1239",
+    border: "rgba(244, 63, 94, 0.25)",
+    indicator: "#f43f5e",
   },
   emergency: {
-    bg: "rgba(127, 29, 29, 0.3)",
-    text: "#fca5a5",
-    border: "rgba(127, 29, 29, 0.6)",
-    indicator: "#ef4444",
+    bg: "#fff1f2",
+    text: "#881337",
+    border: "rgba(225, 29, 72, 0.35)",
+    indicator: "#e11d48",
   },
 };
 
@@ -110,22 +110,22 @@ export function DailyProtocol({
   if (error) {
     return (
       <div
-        className={`glass rounded-2xl p-6 w-full border border-red-500/30 bg-red-950/20 text-center backdrop-blur-md ${className}`}
+        className={`clay-card p-6 w-full text-center ${className}`}
         data-testid="daily-protocol-error"
       >
-        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-500/20 text-red-400 mb-2">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-100 text-red-600 mb-2">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
-        <p className="text-sm font-semibold text-red-300 mb-1">
+        <p className="text-sm font-semibold text-slate-800 mb-1">
           {t("common.error")}: {t("protocol.title")}
         </p>
-        <p className="text-xs text-red-200/70 mb-4 max-w-sm mx-auto">{error}</p>
+        <p className="text-xs text-slate-500 mb-4 max-w-sm mx-auto">{error}</p>
         {onRetry && (
           <button
             onClick={onRetry}
-            className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-red-600/30 hover:bg-red-600/50 text-red-200 border border-red-500/40 transition-colors"
+            className="clay-button px-4 py-1.5 text-xs font-semibold text-slate-700"
           >
             {t("common.retry") || "Retry"}
           </button>
@@ -137,20 +137,20 @@ export function DailyProtocol({
   if (isLoading || !protocol) {
     return (
       <div
-        className={`glass rounded-2xl p-6 w-full animate-pulse border border-white/5 flex flex-col justify-between ${className}`}
+        className={`clay-card p-6 sm:p-7 w-full animate-pulse flex flex-col justify-between min-h-[280px] ${className}`}
         data-testid="daily-protocol-loading"
       >
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div className="h-4 w-36 bg-slate-700/60 rounded"></div>
-            <div className="h-4 w-28 bg-slate-700/50 rounded"></div>
+            <div className="h-6 w-36 bg-slate-200 rounded-lg"></div>
+            <div className="h-5 w-16 bg-amber-100 rounded-full"></div>
           </div>
-          <div className="h-8 w-40 bg-slate-700/50 rounded-full"></div>
-          <div className="h-16 w-full bg-slate-800/50 rounded-xl"></div>
+          <div className="h-5 w-44 bg-slate-200 rounded-full"></div>
+          <div className="h-20 w-full bg-slate-100 rounded-xl"></div>
         </div>
-        <div className="pt-4 mt-4 border-t border-white/5 flex justify-between">
-          <div className="h-3.5 w-48 bg-slate-700/40 rounded"></div>
-          <div className="h-3.5 w-32 bg-slate-700/40 rounded"></div>
+        <div className="pt-4 mt-4 border-t border-slate-100 flex justify-between">
+          <div className="h-3.5 w-48 bg-slate-200 rounded"></div>
+          <div className="h-3.5 w-32 bg-slate-200 rounded"></div>
         </div>
       </div>
     );
@@ -161,36 +161,31 @@ export function DailyProtocol({
 
   return (
     <div
-      className={`glass rounded-2xl p-6 w-full flex flex-col justify-between relative overflow-hidden border border-white/10 shadow-xl ${className}`}
+      className={`clay-card p-6 sm:p-7 w-full flex flex-col justify-between relative overflow-hidden ${className}`}
       data-testid="daily-protocol"
       aria-label="Daily Safety Protocol"
     >
       <div>
-        {/* Header bar: Title & Valid For */}
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
-            <span className="p-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        {/* Header row: Icon badge + Title + Subtitle + SAMPLE badge */}
+        <div className="w-full flex items-center justify-between mb-8 pb-5 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-emerald-700 shadow-xs shrink-0">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-            </span>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-              {t("protocol.title") || "Daily Safety Protocol"}
-            </span>
-          </div>
-
-          {validForDate && (
-            <div
-              data-testid="daily-protocol-valid-for"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-slate-800/80 border border-slate-700/50 px-2.5 py-0.5 rounded-full"
-            >
-              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span>{t("protocol.validFor") || "Valid for"}:</span>
-              <span className="font-semibold text-slate-100">{validForDate}</span>
             </div>
-          )}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+                {language === "hi" ? "आज की योजना" : "Today's plan"}
+              </h2>
+              <p className="text-sm text-slate-400 font-medium mt-0.5">
+                {language === "hi" ? "कार्यकारी स्कूल सुरक्षा निर्णय" : "Executive school safety decision"}
+              </p>
+            </div>
+          </div>
+          <span className="sample-badge text-xs px-3 py-1">
+            SAMPLE
+          </span>
         </div>
 
         {/* Fallback Warning Notice Banner */}
@@ -198,73 +193,79 @@ export function DailyProtocol({
           <div
             data-testid="daily-protocol-fallback-notice"
             role="alert"
-            className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-start gap-2.5 shadow-sm"
+            className="mb-4 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5 shadow-xs"
           >
-            <div className="shrink-0 mt-0.5 text-amber-400">
+            <div className="shrink-0 mt-0.5 text-amber-600">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
             <div className="space-y-0.5 flex-1">
-              <div className="font-bold text-amber-300">
+              <div className="font-bold text-amber-800">
                 {t("protocol.fallbackNotice") || "Notice: Generated using standard fallback protocol"}
               </div>
-              <p className="text-amber-200/80 text-[11px] leading-relaxed">
+              <p className="text-amber-700/90 text-[11px] leading-relaxed">
                 {t("protocol.fallbackDescription") || "Live agent pipeline unavailable or offline. Default conservative safety policies are active."}
               </p>
             </div>
           </div>
         )}
 
-        {/* Overall Status Badge */}
-        <div className="flex flex-wrap items-center gap-2.5 mb-3.5">
+        {/* Overall Executive Guidance Message (Exact visual appearance from screenshot) */}
+        <div className="my-4 text-slate-700 text-base sm:text-lg leading-loose font-medium">
+          {overall_message || "Keep students indoors from 10 AM to 2 PM. Outdoor activity is fine before 9 AM and after 3 PM."}
+        </div>
+
+        {/* Secondary Badges: Protocol status and validFor date */}
+        <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100">
           <span
             data-testid="daily-protocol-status"
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
             style={{
               backgroundColor: badge.bg,
-              color: badge.text,
+              color: badge.text === "#4ade80" ? "#15803d" : badge.text === "#facc15" ? "#a16207" : "#b91c1c",
               border: `1px solid ${badge.border}`,
             }}
           >
             <span
-              className="w-2 h-2 rounded-full animate-pulse"
+              className="w-2 h-2 rounded-full"
               style={{ backgroundColor: badge.indicator }}
             />
             {protocolStatusLabel(overall_status, language)}
           </span>
-          <span className="text-xs text-slate-400 font-medium">
-            (
-            {t("protocol.activePolicies", { count: activities?.length || 0 }) ||
-              `${activities?.length || 0} activity policies active`}
-            )
+
+          {validForDate && (
+            <div
+              data-testid="daily-protocol-valid-for"
+              className="clay-pill inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 px-3 py-1"
+            >
+              <span>{t("protocol.validFor") || "Valid for"}:</span>
+              <span className="text-slate-900">{validForDate}</span>
+            </div>
+          )}
+
+          <span className="text-xs text-slate-500 font-medium ml-auto">
+            {activities?.length || 0} {language === "hi" ? "नीतियां सक्रिय" : "activity policies"}
           </span>
         </div>
-
-        {/* Executive message */}
-        {overall_message && (
-          <div className="bg-slate-900/70 border border-white/5 rounded-xl p-3.5 mb-4 text-xs sm:text-sm text-slate-200 leading-relaxed shadow-inner">
-            {overall_message}
-          </div>
-        )}
       </div>
 
       {/* Protocol metadata footer: generatedAt & sources */}
-      <div className="pt-3 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-400 gap-2">
+      <div className="pt-4 mt-5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 gap-2">
         {generatedAtTimestamp ? (
           <div
             data-testid="daily-protocol-generated-at"
             className="flex items-center gap-1.5"
           >
-            <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>
               {t("protocol.generatedAt") || "Plan generated"}:{" "}
-              <span className="text-slate-300 font-medium">
+              <span className="text-slate-700 font-semibold">
                 {formatDate(generatedAtTimestamp)} {formatTime(generatedAtTimestamp)}
               </span>{" "}
-              <span className="text-slate-500">
+              <span className="text-slate-400">
                 ({formatRelativeTime(generatedAtTimestamp, language)})
               </span>
             </span>
@@ -278,13 +279,13 @@ export function DailyProtocol({
           data-testid="daily-protocol-sources"
           className="flex items-center gap-1.5 flex-wrap"
         >
-          <span className="text-slate-500">
+          <span className="text-slate-400">
             {t("protocol.sources") || "Sources"}:
           </span>
           {sourceList.map((source, idx) => (
             <span
               key={idx}
-              className="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/50 text-[10px] text-slate-300 font-medium"
+              className="clay-pill px-2 py-0.5 text-[10px] text-slate-600 font-semibold"
             >
               {source}
             </span>

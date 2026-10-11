@@ -13,7 +13,7 @@ export default async function HistoryPage() {
   const schoolsData = await getSchools();
 
   return (
-    <main className="min-h-dvh p-4 sm:p-6 md:p-10 max-w-5xl mx-auto space-y-6">
+    <main className="min-h-dvh py-8 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto space-y-7">
       <Header />
       <HistoryClient initialSchools={schoolsData.schools} />
     </main>

@@ -19,7 +19,7 @@ export default async function ParentPage() {
   ]);
 
   return (
-    <main className="min-h-dvh p-4 sm:p-6 md:p-10 max-w-5xl mx-auto space-y-6 print:p-0 print:max-w-none">
+    <main className="min-h-dvh py-8 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto space-y-7 print:p-0 print:max-w-none">
       <div className="print:hidden">
         <Header />
       </div>

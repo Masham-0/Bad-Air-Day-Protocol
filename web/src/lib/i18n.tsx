@@ -215,7 +215,7 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
     <div
       role="group"
       aria-label="Language selection"
-      className={`inline-flex items-center rounded-lg p-0.5 bg-slate-900/80 border border-slate-700/60 shadow-sm backdrop-blur-md ${className}`}
+      className={`inline-flex items-center rounded-xl p-1 bg-white border border-slate-200 shadow-[0_4px_10px_rgba(15,23,42,0.05),inset_0_1px_2px_rgba(255,255,255,0.9)] ${className}`}
       data-testid="language-toggle"
     >
       <button
@@ -224,10 +224,10 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
         aria-pressed={language === "en"}
         aria-label="English"
         data-testid="lang-btn-en"
-        className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all duration-150 ${
+        className={`px-3 py-1 text-xs font-bold rounded-lg transition-all duration-150 ${
           language === "en"
-            ? "bg-blue-600 text-white shadow-sm"
-            : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+            ? "bg-slate-900 text-white shadow-sm"
+            : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
         }`}
       >
         EN
@@ -238,10 +238,10 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
         aria-pressed={language === "hi"}
         aria-label="हिन्दी"
         data-testid="lang-btn-hi"
-        className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all duration-150 ${
+        className={`px-3 py-1 text-xs font-bold rounded-lg transition-all duration-150 ${
           language === "hi"
-            ? "bg-blue-600 text-white shadow-sm"
-            : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+            ? "bg-slate-900 text-white shadow-sm"
+            : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
         }`}
       >
         हिन्दी

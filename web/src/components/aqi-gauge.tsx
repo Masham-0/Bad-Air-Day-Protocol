@@ -146,15 +146,21 @@ export function AqiGauge({
   if (loading) {
     return (
       <div
-        className="glass rounded-2xl p-6 w-full flex flex-col items-center justify-center min-h-[300px] animate-pulse"
+        className="clay-card p-6 sm:p-7 w-full flex flex-col items-center justify-center min-h-[280px] animate-pulse"
         data-testid="aqi-gauge-loading"
       >
-        <div className="w-48 h-28 bg-slate-700/50 rounded-t-full mb-4"></div>
-        <div className="h-8 w-24 bg-slate-700/60 rounded mb-2"></div>
-        <div className="h-5 w-36 bg-slate-700/40 rounded mb-4"></div>
-        <div className="flex gap-4 w-full justify-center">
-          <div className="h-12 w-28 bg-slate-700/40 rounded-lg"></div>
-          <div className="h-12 w-28 bg-slate-700/40 rounded-lg"></div>
+        <div className="w-full flex items-center justify-between mb-6">
+          <div className="h-6 w-32 bg-slate-200 rounded-lg"></div>
+          <div className="h-5 w-16 bg-amber-100 rounded-full"></div>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center gap-8 w-full justify-around">
+          <div className="w-44 h-44 rounded-full bg-slate-200 shrink-0"></div>
+          <div className="space-y-3 w-full max-w-xs">
+            <div className="h-6 w-36 bg-slate-200 rounded-lg"></div>
+            <div className="h-4 w-48 bg-slate-200 rounded"></div>
+            <div className="h-3.5 w-40 bg-slate-200 rounded"></div>
+            <div className="h-3.5 w-28 bg-slate-200 rounded"></div>
+          </div>
         </div>
       </div>
     );
@@ -164,10 +170,10 @@ export function AqiGauge({
   if (!reading) {
     return (
       <div
-        className="glass rounded-2xl p-6 w-full flex flex-col items-center justify-center min-h-[260px] border border-red-500/30 bg-red-950/10 text-center"
+        className="clay-card p-6 w-full flex flex-col items-center justify-center min-h-[260px] text-center"
         data-testid="aqi-gauge-error"
       >
-        <div className="p-3 bg-red-500/20 text-red-400 rounded-full mb-3">
+        <div className="p-3 bg-red-100 text-red-600 rounded-full mb-3">
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
@@ -177,10 +183,10 @@ export function AqiGauge({
             />
           </svg>
         </div>
-        <h3 className="text-base font-semibold text-slate-200 mb-1">
+        <h3 className="text-base font-semibold text-slate-800 mb-1">
           {t("aqi.errorTitle")}
         </h3>
-        <p className="text-xs text-slate-400 max-w-sm mb-4">
+        <p className="text-xs text-slate-500 max-w-sm mb-4">
           {t("aqi.errorEmpty")}
         </p>
         <button
@@ -188,7 +194,7 @@ export function AqiGauge({
             if (onRetry) onRetry();
             else if (schoolId) fetchReading(schoolId);
           }}
-          className="px-4 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+          className="clay-button px-4 py-2 text-xs font-semibold text-slate-700"
         >
           {t("aqi.tryAgain")}
         </button>
@@ -199,163 +205,129 @@ export function AqiGauge({
   const { aqi, pm25, pm10, category, source, recorded_at } = reading;
   const colors = CATEGORY_COLORS[category] || CATEGORY_COLORS.unhealthy;
 
-  // Arc calculations for SVG semi-circle gauge (radius 90, center 120, 110)
-  // Max AQI considered is 500
-  const normalizedAqi = Math.min(Math.max(aqi, 0), 500);
-  const percentage = normalizedAqi / 500;
-  // Arc angle from 180 deg (pi) to 0 deg (0) -> total length = pi * radius
-  const radius = 80;
-  const circumference = Math.PI * radius;
-  const strokeDashoffset = circumference * (1 - percentage);
+  // Guidance helper based on category
+  const getGuidanceText = () => {
+    switch (category) {
+      case "good":
+        return language === "hi" ? "बाहरी गतिविधियाँ सुरक्षित हैं" : "Air quality is ideal for outdoor activities";
+      case "moderate":
+        return language === "hi" ? "संवेदनशील छात्र सावधानी बरतें" : "Sensitive individuals should take precautions";
+      case "unhealthy_sensitive":
+        return language === "hi" ? "बाहरी समय कम करें" : "Limit strenuous outdoor exercise";
+      case "unhealthy":
+        return language === "hi" ? "बाहरी समय सीमित करें" : "Limit outdoor time";
+      case "very_unhealthy":
+        return language === "hi" ? "सभी बाहरी खेल बंद रखें" : "Avoid all outdoor physical exertion";
+      case "hazardous":
+        return language === "hi" ? "घर के अंदर ही रहें" : "Remain indoors with clean air filtration";
+      default:
+        return language === "hi" ? "बाहरी समय सीमित करें" : "Limit outdoor time";
+    }
+  };
+
+  // Ring border color helper
+  const getRingColor = () => {
+    switch (category) {
+      case "good":
+        return "border-emerald-500 text-emerald-700";
+      case "moderate":
+        return "border-amber-500 text-amber-700";
+      case "unhealthy_sensitive":
+        return "border-orange-500 text-orange-700";
+      case "unhealthy":
+        return "border-amber-600 text-amber-800";
+      case "very_unhealthy":
+        return "border-purple-500 text-purple-700";
+      case "hazardous":
+        return "border-rose-600 text-rose-800";
+      default:
+        return "border-amber-500 text-amber-700";
+    }
+  };
+
+  const ringStyles = getRingColor();
+  const displayPM25 = pm25 !== undefined ? Math.round(pm25) : Math.round(aqi * 0.55);
 
   return (
     <div
-      className="glass rounded-2xl p-6 w-full flex flex-col items-center relative overflow-hidden"
+      className="clay-card p-6 sm:p-7 w-full flex flex-col justify-between relative overflow-hidden"
       data-testid="aqi-gauge"
     >
-      {/* Background radial highlight */}
-      <div
-        className="absolute top-0 inset-x-0 h-40 opacity-20 pointer-events-none blur-3xl"
-        style={{ background: colors.stroke }}
-      />
-
-      <div className="w-full flex items-center justify-between text-xs text-slate-400 mb-2">
-        <span className="font-semibold tracking-wider uppercase text-slate-400">
-          {t("aqi.index")}
+      {/* Header row: Icon badge + Title + Subtitle + SAMPLE badge */}
+      <div className="w-full flex items-center justify-between mb-8 pb-5 border-b border-slate-100">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-700 shadow-xs shrink-0">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+              {language === "hi" ? "वर्तमान वायु गुणवत्ता" : "Air right now"}
+            </h2>
+            <p className="text-sm text-slate-400 font-medium mt-0.5">
+              {language === "hi" ? "रीयल-टाइम स्थानीय वायु संवेदक" : "Real-time school monitor measurement"}
+            </p>
+          </div>
+        </div>
+        <span className="sample-badge text-xs px-3 py-1">
+          SAMPLE
         </span>
-        <div
-          className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
-          style={{
-            backgroundColor: colors.bg,
-            color: colors.text,
-            border: `1px solid ${colors.border}`,
-          }}
-        >
-          <span
-            className="w-1.5 h-1.5 rounded-full animate-pulse"
-            style={{ backgroundColor: colors.stroke }}
-          />
-          {getLocalizedCategoryLabel(category, language)}
-        </div>
       </div>
 
-      {/* SVG Semi-Circle Gauge */}
-      <div className="relative w-64 h-36 flex items-end justify-center my-2">
-        <svg
-          viewBox="0 0 200 120"
-          className="w-full h-full overflow-visible"
-        >
-          <defs>
-            <linearGradient id="aqi-arc-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#22c55e" />
-              <stop offset="20%" stopColor="#eab308" />
-              <stop offset="40%" stopColor="#f97316" />
-              <stop offset="60%" stopColor="#ef4444" />
-              <stop offset="80%" stopColor="#a855f7" />
-              <stop offset="100%" stopColor="#7f1d1d" />
-            </linearGradient>
-          </defs>
-
-          {/* Background Track */}
-          <path
-            d="M 20 110 A 80 80 0 0 1 180 110"
-            fill="none"
-            stroke="rgba(255, 255, 255, 0.08)"
-            strokeWidth="16"
-            strokeLinecap="round"
-          />
-
-          {/* Value Arc */}
-          <path
-            d="M 20 110 A 80 80 0 0 1 180 110"
-            fill="none"
-            stroke={colors.stroke}
-            strokeWidth="16"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            style={{
-              transition: "stroke-dashoffset 0.8s ease-out, stroke 0.4s ease",
-            }}
-          />
-        </svg>
-
-        {/* Center AQI value */}
-        <div className="absolute inset-x-0 bottom-1 flex flex-col items-center justify-center">
-          <span
-            className="text-5xl font-extrabold tracking-tight leading-none"
-            style={{ color: colors.text }}
-          >
-            {aqi}
-          </span>
-          <span className="text-xs uppercase tracking-widest text-slate-400 mt-1">
-            {t("aqi.value")}
-          </span>
-        </div>
-      </div>
-
-      {/* Pollutant metrics sub-cards */}
-      <div className="grid grid-cols-2 gap-3 w-full my-4">
-        <div className="bg-slate-900/60 border border-white/5 rounded-xl p-3 text-center">
-          <span className="text-[11px] uppercase tracking-wider text-slate-400 block mb-0.5">
-            {t("aqi.pm25")}
-          </span>
-          <span className="text-base font-semibold text-slate-100">
-            {formatPM25(pm25)}
-          </span>
+      {/* Main body: Circular clay disc + Status details column */}
+      <div className="flex flex-row items-center gap-8 sm:gap-14 my-auto py-3">
+        {/* Left: Tactile Clay Circle Gauge Disc */}
+        <div className="relative group shrink-0">
+          <div className="clay-circle-gauge w-40 h-40 sm:w-44 sm:h-44 flex flex-col items-center justify-center p-4 text-center transition-transform duration-300 group-hover:scale-[1.02]">
+            {/* PM2.5 value matching reference "92" */}
+            <span
+              className="text-5xl sm:text-6xl font-black tracking-tight leading-none font-sans"
+              style={{ color: colors.stroke === "#22c55e" ? "#15803d" : colors.stroke === "#eab308" ? "#b45309" : "#92400e" }}
+            >
+              {displayPM25}
+            </span>
+            <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">
+              PM2.5 µg/m³
+            </span>
+          </div>
         </div>
 
-        <div className="bg-slate-900/60 border border-white/5 rounded-xl p-3 text-center">
-          <span className="text-[11px] uppercase tracking-wider text-slate-400 block mb-0.5">
-            {t("aqi.pm10")}
-          </span>
-          <span className="text-base font-semibold text-slate-100">
-            {pm10 !== undefined ? formatPM10(pm10) : t("common.na")}
-          </span>
-        </div>
-      </div>
-
-      {/* Visible Source & Timestamp */}
-      <div className="w-full pt-3 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-400 gap-1.5">
-        <div className="flex items-center gap-1.5 truncate max-w-full">
-          <svg
-            className="w-3.5 h-3.5 text-blue-400 shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+        {/* Right: Status column */}
+        <div className="flex flex-col items-start text-left space-y-1 flex-1">
+          {/* Category line with hollow ring dot: ○ Poor, AQI 172 */}
+          <div className="flex items-center gap-2">
+            <span
+              className={`w-3.5 h-3.5 rounded-full border-2 shrink-0 ${ringStyles.split(" ")[0]}`}
             />
-          </svg>
-          <span className="truncate">
-            {t("aqi.source")}: <strong className="text-slate-300 font-medium">{source}</strong>
-          </span>
-        </div>
+            <span className="text-base sm:text-lg font-bold text-amber-800">
+              {getLocalizedCategoryLabel(category, language)}, {t("aqi.index")} {aqi}
+            </span>
+          </div>
 
-        <div className="flex items-center gap-1 shrink-0">
-          <svg
-            className="w-3.5 h-3.5 text-slate-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>
-            {formatDate(recorded_at, language === "hi" ? "hi-IN" : "en-IN")},{" "}
-            {formatTime(recorded_at, language === "hi" ? "hi-IN" : "en-IN")} (
-            {formatRelativeTime(recorded_at, language)})
-          </span>
+          {/* Action / Guidance text: Limit outdoor time */}
+          <p className="text-base font-medium text-slate-600 leading-snug mt-1">
+            {getGuidanceText()}
+          </p>
+
+          {/* Station / location */}
+          <p className="text-sm text-slate-400 pt-1">
+            {source || "Rohini (sample station)"}
+          </p>
+
+          {/* Updated timestamp */}
+          <p className="text-sm text-slate-400">
+            {language === "hi" ? "अपडेट किया गया" : "Updated"}{" "}
+            {formatTime(recorded_at, language === "hi" ? "hi-IN" : "en-IN")} IST
+          </p>
         </div>
+      </div>
+
+      {/* Screen-reader sensor details */}
+      <div className="sr-only">
+        <span>{t("aqi.pm25")}: {formatPM25(pm25)}</span>
+        {pm10 !== undefined && <span>{t("aqi.pm10")}: {formatPM10(pm10)}</span>}
+        <span>{formatDate(recorded_at)} ({formatRelativeTime(recorded_at, language)})</span>
       </div>
     </div>
   );

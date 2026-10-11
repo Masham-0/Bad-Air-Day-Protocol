@@ -22,7 +22,7 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="min-h-dvh p-4 sm:p-6 md:p-10 max-w-6xl mx-auto space-y-6">
+    <main className="w-full min-h-dvh py-7 sm:py-8 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto space-y-8 sm:space-y-10">
       <Header />
 
       {/* Main Dashboard Client */}

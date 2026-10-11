@@ -12,6 +12,7 @@ import {
   getProtocol,
   getParentNotices,
 } from "@/lib/api-client";
+import { formatDate, formatTime } from "@/lib/formatters";
 import type {
   School,
   AirQualityReading,
@@ -85,46 +86,15 @@ export function DashboardClient({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Top Banner: Mode Indicator & Quick Links */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs bg-slate-900/60 border border-white/5 rounded-xl px-4 py-2.5">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400">Data Source:</span>
-          {isMockMode ? (
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-              Mock Mode (contracts/examples)
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              Live API Connected
-            </span>
-          )}
-        </div>
-
-        <nav className="flex items-center gap-4 text-slate-300 font-medium">
-          <a href="/" className="hover:text-blue-400 transition-colors text-blue-400">
-            Dashboard
-          </a>
-          <span className="text-slate-700">•</span>
-          <a href="/parent" className="hover:text-blue-400 transition-colors">
-            Parent View
-          </a>
-          <span className="text-slate-700">•</span>
-          <a href="/history" className="hover:text-blue-400 transition-colors">
-            Historical Trends
-          </a>
-        </nav>
-      </div>
+    <div className="space-y-12 sm:space-y-14">
 
       {/* Global Error Banner if school switch fails */}
       {error && (
-        <div className="p-4 rounded-xl bg-red-950/20 border border-red-500/30 text-red-200 text-sm flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center justify-between shadow-sm">
           <span>{error}</span>
           <button
             onClick={() => handleSelectSchool(selectedSchool)}
-            className="px-3 py-1 bg-red-600/30 hover:bg-red-600/50 rounded text-xs font-semibold"
+            className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded-xl text-xs font-bold text-white shadow-sm"
           >
             Retry
           </button>
@@ -137,25 +107,21 @@ export function DashboardClient({
           schools={initialSchools}
           selectedSchoolId={selectedSchool?.id}
           onSelectSchool={handleSelectSchool}
+          planDate={protocol?.date ? formatDate(protocol.date) : "Sunday, 11 October"}
+          planTime={protocol?.generated_at ? formatTime(protocol.generated_at) : "6:00 am"}
         />
       </section>
 
-      {/* 2. Top Grid: Current AQI Gauge + Daily Protocol Card */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+      {/* 2. Air right now (Current AQI Gauge) */}
+      <section>
         <AqiGauge
           reading={reading}
           schoolId={selectedSchool?.id}
           isLoading={isLoading}
         />
+      </section>
 
-        <DailyProtocol
-          protocol={protocol}
-          isLoading={isLoading}
-          onRetry={() => handleSelectSchool(selectedSchool)}
-        />
-      </div>
-
-      {/* 3. 24-Hour Forecast Timeline */}
+      {/* 3. Next 24 hours (IST) (Forecast Timeline Scrubber) */}
       <section>
         <ForecastTimeline
           forecast={forecast}
@@ -164,7 +130,16 @@ export function DashboardClient({
         />
       </section>
 
-      {/* 4. Activity Decision Schedule Windows (Krishna slot) */}
+      {/* 4. Today's plan (Daily Safety Protocol) */}
+      <section>
+        <DailyProtocol
+          protocol={protocol}
+          isLoading={isLoading}
+          onRetry={() => handleSelectSchool(selectedSchool)}
+        />
+      </section>
+
+      {/* 5. Activity Schedule Decisions */}
       <section>
         <ActivityWindows
           activities={protocol?.activities}
@@ -173,7 +148,7 @@ export function DashboardClient({
         />
       </section>
 
-      {/* 5. Parent Advisories Notice (Krishna slot) */}
+      {/* 6. Parent Advisories Notice */}
       <section>
         <ParentNotice
           notices={notices}
