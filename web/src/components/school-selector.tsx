@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import type { School } from "@/types/api";
 import { getSchools } from "@/lib/api-client";
+import { useTranslation } from "@/lib/i18n";
 
 export interface SchoolSelectorProps {
   schools?: School[];
@@ -21,6 +22,7 @@ export function SchoolSelector({
   error: externalError,
   onRetry,
 }: SchoolSelectorProps) {
+  const { t } = useTranslation();
   const [internalSchools, setInternalSchools] = useState<School[]>([]);
   const [internalLoading, setInternalLoading] = useState<boolean>(
     !initialSchools
@@ -83,7 +85,7 @@ export function SchoolSelector({
             />
           </svg>
           <div>
-            <p className="text-sm font-medium">Unable to load schools</p>
+            <p className="text-sm font-medium">{t("schoolSelector.errorTitle")}</p>
             <p className="text-xs text-red-300/80">{error}</p>
           </div>
         </div>
@@ -91,7 +93,7 @@ export function SchoolSelector({
           onClick={onRetry ?? fetchSchools}
           className="px-3 py-1.5 text-xs font-semibold rounded-md bg-red-600/30 hover:bg-red-600/50 border border-red-500/40 text-red-100 transition-colors"
         >
-          Retry
+          {t("schoolSelector.retry")}
         </button>
       </div>
     );
@@ -135,10 +137,10 @@ export function SchoolSelector({
         </div>
         <div>
           <span className="text-xs font-medium uppercase tracking-wider text-slate-400">
-            Selected School
+            {t("schoolSelector.selectedSchool")}
           </span>
           <h2 className="text-lg font-semibold text-slate-100">
-            {currentSchool?.name || "Select a school"}
+            {currentSchool?.name || t("schoolSelector.placeholder")}
           </h2>
           {currentSchool?.address && (
             <p className="text-xs text-slate-400 mt-0.5">
@@ -151,7 +153,7 @@ export function SchoolSelector({
 
       <div className="relative min-w-[200px]">
         <label htmlFor="school-select" className="sr-only">
-          Select School
+          {t("schoolSelector.selectLabel")}
         </label>
         <select
           id="school-select"

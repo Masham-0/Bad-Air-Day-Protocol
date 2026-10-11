@@ -12,6 +12,7 @@ import {
   aqiCategoryLabel,
   aqiCategoryColor,
 } from "@/lib/formatters";
+import { useTranslation, getLocalizedCategoryLabel } from "@/lib/i18n";
 
 export interface AqiGaugeProps {
   reading?: AirQualityReading | null;
@@ -67,6 +68,7 @@ export function AqiGauge({
   error: externalError,
   onRetry,
 }: AqiGaugeProps) {
+  const { t, language } = useTranslation();
   const effectiveSchoolId = schoolId || "sch_anand_vihar_01";
   const [internalReading, setInternalReading] = useState<AirQualityReading | null>(
     initialReading ?? null
@@ -122,7 +124,7 @@ export function AqiGauge({
           </svg>
         </div>
         <h3 className="text-base font-semibold text-slate-200 mb-1">
-          Air Quality Data Unavailable
+          {t("aqi.errorTitle")}
         </h3>
         <p className="text-xs text-slate-400 max-w-sm mb-4">
           {error}
@@ -134,7 +136,7 @@ export function AqiGauge({
           }}
           className="px-4 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
         >
-          Try Again
+          {t("aqi.tryAgain")}
         </button>
       </div>
     );
@@ -176,10 +178,10 @@ export function AqiGauge({
           </svg>
         </div>
         <h3 className="text-base font-semibold text-slate-200 mb-1">
-          Air Quality Data Unavailable
+          {t("aqi.errorTitle")}
         </h3>
         <p className="text-xs text-slate-400 max-w-sm mb-4">
-          No air quality reading found for this location.
+          {t("aqi.errorEmpty")}
         </p>
         <button
           onClick={() => {
@@ -188,7 +190,7 @@ export function AqiGauge({
           }}
           className="px-4 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
         >
-          Try Again
+          {t("aqi.tryAgain")}
         </button>
       </div>
     );
@@ -219,7 +221,7 @@ export function AqiGauge({
 
       <div className="w-full flex items-center justify-between text-xs text-slate-400 mb-2">
         <span className="font-semibold tracking-wider uppercase text-slate-400">
-          Air Quality Index
+          {t("aqi.index")}
         </span>
         <div
           className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -233,7 +235,7 @@ export function AqiGauge({
             className="w-1.5 h-1.5 rounded-full animate-pulse"
             style={{ backgroundColor: colors.stroke }}
           />
-          {aqiCategoryLabel(category)}
+          {getLocalizedCategoryLabel(category, language)}
         </div>
       </div>
 
@@ -287,7 +289,7 @@ export function AqiGauge({
             {aqi}
           </span>
           <span className="text-xs uppercase tracking-widest text-slate-400 mt-1">
-            AQI Value
+            {t("aqi.value")}
           </span>
         </div>
       </div>
@@ -296,7 +298,7 @@ export function AqiGauge({
       <div className="grid grid-cols-2 gap-3 w-full my-4">
         <div className="bg-slate-900/60 border border-white/5 rounded-xl p-3 text-center">
           <span className="text-[11px] uppercase tracking-wider text-slate-400 block mb-0.5">
-            PM2.5 Concentration
+            {t("aqi.pm25")}
           </span>
           <span className="text-base font-semibold text-slate-100">
             {formatPM25(pm25)}
@@ -305,10 +307,10 @@ export function AqiGauge({
 
         <div className="bg-slate-900/60 border border-white/5 rounded-xl p-3 text-center">
           <span className="text-[11px] uppercase tracking-wider text-slate-400 block mb-0.5">
-            PM10 Concentration
+            {t("aqi.pm10")}
           </span>
           <span className="text-base font-semibold text-slate-100">
-            {pm10 !== undefined ? formatPM10(pm10) : "N/A"}
+            {pm10 !== undefined ? formatPM10(pm10) : t("common.na")}
           </span>
         </div>
       </div>
@@ -330,7 +332,7 @@ export function AqiGauge({
             />
           </svg>
           <span className="truncate">
-            Source: <strong className="text-slate-300 font-medium">{source}</strong>
+            {t("aqi.source")}: <strong className="text-slate-300 font-medium">{source}</strong>
           </span>
         </div>
 
@@ -349,8 +351,9 @@ export function AqiGauge({
             />
           </svg>
           <span>
-            {formatDate(recorded_at)}, {formatTime(recorded_at)} (
-            {formatRelativeTime(recorded_at)})
+            {formatDate(recorded_at, language === "hi" ? "hi-IN" : "en-IN")},{" "}
+            {formatTime(recorded_at, language === "hi" ? "hi-IN" : "en-IN")} (
+            {formatRelativeTime(recorded_at, language)})
           </span>
         </div>
       </div>

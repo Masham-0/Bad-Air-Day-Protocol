@@ -11,9 +11,9 @@ import type { AqiCategory, ProtocolStatus, NoticeSeverity } from "@/types/api";
  * Format an ISO 8601 timestamp as a locale-aware date string.
  * @example formatDate("2026-10-10T10:00:00+05:30") → "10 Oct 2026"
  */
-export function formatDate(iso: string): string {
+export function formatDate(iso: string, locale: string = "en-IN"): string {
   const d = new Date(iso);
-  return d.toLocaleDateString("en-IN", {
+  return d.toLocaleDateString(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -24,9 +24,9 @@ export function formatDate(iso: string): string {
  * Format an ISO 8601 timestamp as a time string.
  * @example formatTime("2026-10-10T10:00:00+05:30") → "10:00 AM"
  */
-export function formatTime(iso: string): string {
+export function formatTime(iso: string, locale: string = "en-IN"): string {
   const d = new Date(iso);
-  return d.toLocaleTimeString("en-IN", {
+  return d.toLocaleTimeString(locale, {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
@@ -37,9 +37,9 @@ export function formatTime(iso: string): string {
  * Format an ISO 8601 timestamp as a short hour label.
  * @example formatHour("2026-10-10T14:00:00+05:30") → "2 PM"
  */
-export function formatHour(iso: string): string {
+export function formatHour(iso: string, locale: string = "en-IN"): string {
   const d = new Date(iso);
-  return d.toLocaleTimeString("en-IN", {
+  return d.toLocaleTimeString(locale, {
     hour: "numeric",
     hour12: true,
   });
@@ -48,11 +48,20 @@ export function formatHour(iso: string): string {
 /**
  * Format an ISO timestamp as relative time (e.g. "5 min ago", "2 hrs ago").
  */
-export function formatRelativeTime(iso: string): string {
+export function formatRelativeTime(iso: string, lang: "en" | "hi" = "en"): string {
   const now = Date.now();
   const then = new Date(iso).getTime();
   const diffMs = now - then;
   const diffMin = Math.round(diffMs / 60_000);
+
+  if (lang === "hi") {
+    if (diffMin < 1) return "अभी";
+    if (diffMin < 60) return `${diffMin} मिनट पहले`;
+    const diffHrs = Math.round(diffMin / 60);
+    if (diffHrs < 24) return `${diffHrs} घंटे पहले`;
+    const diffDays = Math.round(diffHrs / 24);
+    return `${diffDays} दिन पहले`;
+  }
 
   if (diffMin < 1) return "just now";
   if (diffMin < 60) return `${diffMin} min ago`;
@@ -68,10 +77,10 @@ export function formatRelativeTime(iso: string): string {
  * Format a date string (YYYY-MM-DD) as a readable date.
  * @example formatDateOnly("2026-10-10") → "10 Oct 2026"
  */
-export function formatDateOnly(dateStr: string): string {
+export function formatDateOnly(dateStr: string, locale: string = "en-IN"): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   const d = new Date(year, month - 1, day);
-  return d.toLocaleDateString("en-IN", {
+  return d.toLocaleDateString(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -109,7 +118,18 @@ export function formatAQI(value: number): string {
 /**
  * Map an AQI category enum value to a human-readable label.
  */
-export function aqiCategoryLabel(category: AqiCategory): string {
+export function aqiCategoryLabel(category: AqiCategory, lang: "en" | "hi" = "en"): string {
+  if (lang === "hi") {
+    const hiLabels: Record<AqiCategory, string> = {
+      good: "अच्छा",
+      moderate: "मध्यम",
+      unhealthy_sensitive: "संवेदनशील समूहों के लिए अस्वस्थ",
+      unhealthy: "अस्वस्थ",
+      very_unhealthy: "बहुत अस्वस्थ",
+      hazardous: "खतरनाक",
+    };
+    return hiLabels[category] ?? category;
+  }
   const labels: Record<AqiCategory, string> = {
     good: "Good",
     moderate: "Moderate",
@@ -171,7 +191,16 @@ export function aqiToCategory(aqi: number): AqiCategory {
 /**
  * Map a protocol status enum to a human-readable label.
  */
-export function protocolStatusLabel(status: ProtocolStatus): string {
+export function protocolStatusLabel(status: ProtocolStatus, lang: "en" | "hi" = "en"): string {
+  if (lang === "hi") {
+    const hiLabels: Record<ProtocolStatus, string> = {
+      all_clear: "सब सुरक्षित",
+      caution: "सावधानी",
+      restricted: "प्रतिबंधित",
+      emergency: "आपातकालीन",
+    };
+    return hiLabels[status] ?? status;
+  }
   const labels: Record<ProtocolStatus, string> = {
     all_clear: "All Clear",
     caution: "Caution",
@@ -211,7 +240,15 @@ export function noticeSeverityColor(severity: NoticeSeverity): string {
 /**
  * Map a notice severity to a human-readable label.
  */
-export function noticeSeverityLabel(severity: NoticeSeverity): string {
+export function noticeSeverityLabel(severity: NoticeSeverity, lang: "en" | "hi" = "en"): string {
+  if (lang === "hi") {
+    const hiLabels: Record<NoticeSeverity, string> = {
+      info: "सूचना",
+      warning: "चेतावनी",
+      critical: "गंभीर",
+    };
+    return hiLabels[severity] ?? severity;
+  }
   const labels: Record<NoticeSeverity, string> = {
     info: "Information",
     warning: "Warning",

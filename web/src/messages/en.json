@@ -1,0 +1,112 @@
+{
+  "app": {
+    "title": "Bad Air Day Protocol",
+    "description": "Real-time school air quality monitoring & activity safety protocol"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "parent": "Parent Notice",
+    "history": "History",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिन्दी",
+    "switchTo": "Switch language"
+  },
+  "schoolSelector": {
+    "title": "School",
+    "selectedSchool": "Selected School",
+    "selectLabel": "Select School",
+    "placeholder": "Choose a school...",
+    "search": "Search schools...",
+    "allSchools": "All Schools",
+    "district": "District",
+    "location": "Location",
+    "loading": "Loading schools...",
+    "errorTitle": "Unable to load schools",
+    "retry": "Retry"
+  },
+  "aqi": {
+    "index": "Air Quality Index",
+    "value": "AQI Value",
+    "categories": {
+      "good": "Good",
+      "moderate": "Moderate",
+      "unhealthy_sensitive": "Unhealthy for Sensitive Groups",
+      "unhealthy": "Unhealthy",
+      "very_unhealthy": "Very Unhealthy",
+      "hazardous": "Hazardous"
+    },
+    "pm25": "PM2.5 Concentration",
+    "pm10": "PM10 Concentration",
+    "source": "Source",
+    "recordedAt": "Recorded at",
+    "errorTitle": "Air Quality Data Unavailable",
+    "errorEmpty": "No air quality reading found for this location.",
+    "tryAgain": "Try Again"
+  },
+  "time": {
+    "justNow": "just now",
+    "minAgo": "{count} min ago",
+    "hrAgo": "{count} hr ago",
+    "hrsAgo": "{count} hrs ago",
+    "dayAgo": "{count} day ago",
+    "daysAgo": "{count} days ago"
+  },
+  "protocol": {
+    "title": "Daily Activity Protocol",
+    "subtitle": "Activity decisions based on air quality forecasts",
+    "overallStatus": "Overall Status",
+    "status": {
+      "all_clear": "All Clear",
+      "caution": "Caution",
+      "restricted": "Restricted",
+      "emergency": "Emergency"
+    },
+    "decision": {
+      "outdoors": "Outdoors",
+      "indoors": "Indoors",
+      "restricted": "Restricted"
+    },
+    "activity": "Activity",
+    "scheduledTime": "Scheduled Time",
+    "recommendation": "Decision",
+    "reason": "Reason",
+    "alternative": "Suggested Alternative",
+    "generatedAt": "Generated at",
+    "validFor": "Valid for",
+    "sources": "Sources",
+    "fallbackNotice": "Notice: Generated using standard fallback protocol",
+    "empty": "No protocol activities scheduled for today."
+  },
+  "notice": {
+    "title": "Parent Notice",
+    "subtitle": "Important advisory for parents and guardians",
+    "severity": {
+      "info": "Information",
+      "warning": "Warning",
+      "critical": "Critical"
+    },
+    "issuedAt": "Issued",
+    "expiresAt": "Valid until",
+    "print": "Print Notice",
+    "share": "Share",
+    "copied": "Link copied to clipboard!",
+    "empty": "No active notices for this school today."
+  },
+  "forecast": {
+    "title": "24-Hour Forecast",
+    "hour": "Hour",
+    "aqi": "Forecast AQI"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "close": "Close",
+    "refresh": "Refresh",
+    "na": "N/A"
+  }
+}
